@@ -1,0 +1,70 @@
+Front end design 
+
+Customers : customerId, username, password, credentials = customer, checking, savings, investment
+	(customerId should be simple to rememver and later on can not be a data store key) 
+	Can deposit / withdraw / and transfer from their own account
+
+Admin : (also customers with permissions to all screens)
+	allowed to change user credentials
+
+Employees: Can view any account with a customerId
+		deposit/withdraw/transfer money for customer 
+		can send money from one customer to another 
+		also customers? 
+
+
+Pages:		
+	Create account screen
+		Must be employee / admin to access
+		Takes username and password
+		credentials set to customer
+
+	Create admin account ? 
+		username / password 
+		security pin/question ? or something so we can create an admin accounts
+
+	Login screen 
+		User will input their username, password, and verification of credentials ( user must confirm they are admin, customer, or employee ) ??
+		sends all 3 to confirm a succesful login 
+
+	Account summary page 
+		Displays the user checking , savings and investment balances
+		button to go to transaction histor or deposit/withdraw page
+
+	Customer deposit/ withdraw page 
+		Shows balance of 3 accounts 
+		User selects an account , withdraw or deposit, and amount 
+		
+	Customer transaction history page 
+		Shows the all the transactions a user has made 
+	
+	
+	Employee customer search page 
+		Where the employee will be taken after logged in, 
+		must be logged in to view 
+		enters a customer id to search for customer, if not found displays a no customer found message 
+	
+	employee customer page 
+		shows customers balances
+		allows employee to withdraw / deposit from accounts 
+		allows employee to transfer funds to another account (using accounts customerId)
+		
+		or we could have an employee customer account summary page
+	
+	
+
+Also if we wanted to not have as many pages..
+Account summary and deposit / withdraw could be combined for the customers 
+	
+	
+	
+Bank accounts should be created by employees / admin. Customers can not create their own account
+	
+	
+	customer login -> account summary -> transaction page 
+									  -> deposit/withdraw 
+
+	
+	
+	employee/admin login -> customer search -> employee customer page -> transaction history
+							account create - >						  -> employee deposit/withdraw/send
