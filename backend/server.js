@@ -32,6 +32,8 @@ const dbo = require("./db/conn");
 
 app.use(express.json());
 
+app.use(require("./routes/test_routes.js"));
+
 // app.use(require("./routes/accounts"));
 
 const port = process.env.PORT;
