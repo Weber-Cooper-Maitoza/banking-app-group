@@ -1,7 +1,10 @@
 Front end design 
 
+BACKEND PORT 5001
+~~Frontend 3000
+
 Customers : customerId, username, password, credentials = customer, checking, savings, investment
-	(customerId should be simple to rememver and later on can not be a data store key) 
+	(customerId should be simple to remember and later on can not be a data store key) 
 	Can deposit / withdraw / and transfer from their own account
 
 Admin : (also customers with permissions to all screens)
@@ -14,42 +17,44 @@ Employees: Can view any account with a customerId
 
 
 Pages:		
-	Create account screen
+	Create account screen -- Brody
 		Must be employee / admin to access
 		Takes username and password
 		credentials set to customer
 
-	Create admin account ? 
+	Create admin account ? --- Brody
 		username / password 
 		security pin/question ? or something so we can create an admin accounts
 
-	Login screen 
-		User will input their username, password, and verification of credentials ( user must confirm they are admin, customer, or employee ) ??
+	Login screen --Brody
+		User will input their username, password
 		sends all 3 to confirm a succesful login 
 
-	Account summary page 
+	Account summary page -- Coleton
 		Displays the user checking , savings and investment balances
-		button to go to transaction histor or deposit/withdraw page
+		button to go to transaction history or deposit/withdraw page
 
-	Customer deposit/ withdraw page 
+	Customer deposit/ withdraw page -- Coleton
 		Shows balance of 3 accounts 
 		User selects an account , withdraw or deposit, and amount 
 		
-	Customer transaction history page 
+	Customer transaction history page  -- Coleton
 		Shows the all the transactions a user has made 
 	
 	
-	Employee customer search page 
+	Employee customer search page -- Cooper
 		Where the employee will be taken after logged in, 
 		must be logged in to view 
 		enters a customer id to search for customer, if not found displays a no customer found message 
 	
-	employee customer page 
+	employee customer page -- Cooper
 		shows customers balances
 		allows employee to withdraw / deposit from accounts 
 		allows employee to transfer funds to another account (using accounts customerId)
-		
+		check if admin and can change roles 
 		or we could have an employee customer account summary page
+
+	navbar  -- Cooper
 	
 	
 
