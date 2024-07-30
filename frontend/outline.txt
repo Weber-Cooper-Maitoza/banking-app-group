@@ -30,16 +30,18 @@ Pages:
 		User will input their username, password
 		sends all 3 to confirm a succesful login 
 
-	Account summary page -- Coleton
-		Displays the user checking , savings and investment balances
-		button to go to transaction history or deposit/withdraw page
+	
+	Customer Account Detail Page 
+		Account summary page -- Coleton
+			Displays the user checking , savings and investment balances
+			button to go to transaction history or deposit/withdraw page
 
-	Customer deposit/ withdraw page -- Coleton
-		Shows balance of 3 accounts 
-		User selects an account , withdraw or deposit, and amount 
-		
-	Customer transaction history page  -- Coleton
-		Shows the all the transactions a user has made 
+		Customer deposit/ withdraw page -- Coleton
+			Shows balance of 3 accounts 
+			User selects an account , withdraw or deposit, and amount 
+			
+		Customer transaction history page  -- Coleton
+			Shows the all the transactions a user has made 
 	
 	
 	Employee customer search page -- Cooper

@@ -8,7 +8,7 @@ export default function UserName() {
 	// const navigate = useNavigate();
 
 	const [userName, setUserName] = useState("");
-	const [accessType, setAccess] = useState();
+	const [accessType, setAccess] = useState(" ");
 
 	const [bankAccounts, setBank] = useState([
 		{
@@ -65,7 +65,15 @@ export default function UserName() {
 
 	return (
 		<div className="container-md mt-3">
-			<h2>Welcome {userName}</h2>
+			<div className="col">
+				<h3 className="col">Welcome {userName}</h3>
+				<h4 className="col text-secondary">
+					Role:{" "}
+					{accessType.charAt(0).toUpperCase() + accessType.slice(1)}
+				</h4>
+			</div>
+			<h2 className="mt-4">Bank Details</h2>
+
 			{bankAccounts.map((account, idx) => {
 				return (
 					<div className="container-fluid my-3">
@@ -86,7 +94,7 @@ function History({ account }) {
 	const [showHistory, setShowHistory] = useState();
 	const history = account.history;
 	return (
-		<div className="">
+		<div className="container">
 			<div className="row">
 				<h4 className="col-3">{account.accountName}</h4>
 				<h5 className="col text-end mx-5 text-secondary">
@@ -151,7 +159,7 @@ function HistoryItem({ history, idx }) {
 }
 
 function BankEdit({ account }) {
-	const [amount, setAmount] = useState();
+	const [amount, setAmount] = useState("");
 	const [typeSelect, setType] = useState("Deposit");
 
 	function updateAccount(e) {
@@ -188,13 +196,17 @@ function BankEdit({ account }) {
 						placeholder="0"
 						value={amount}
 						onChange={(e) => {
-							const re = /^[0-9\b]+$/;
+							const re = new RegExp(
+								"^\\$?(([1-9](\\d*|\\d{0,2}(,\\d{3})*))|0)?(\\.\\d{0,2})?$"
+							);
+
 							if (
 								e.target.value === "" ||
 								re.test(e.target.value)
 							) {
 								setAmount(e.target.value);
 							}
+							console.log(amount);
 						}}
 					/>
 				</div>
@@ -204,6 +216,7 @@ function BankEdit({ account }) {
 						type="submit"
 						className="btn btn-secondary my-2"
 						onClick={updateAccount}
+						disabled={amount === ""}
 					>
 						Submit
 					</button>
@@ -225,7 +238,7 @@ function TransferMenu({ bankAccounts }) {
 	return (
 		<>
 			<h2>Transfer</h2>
-			<form className="row mb-3">
+			<form className="row mb-3 mx-3">
 				<div className="col">
 					<label for="disabledSelect" className="form-label">
 						From:
