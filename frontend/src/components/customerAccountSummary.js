@@ -7,7 +7,7 @@ import "./css/bootstrap.css";
 export default function UserName() {
 	// const navigate = useNavigate();
 
-	const [userName, setUserName] = useState();
+	const [userName, setUserName] = useState("");
 	const [accessType, setAccess] = useState();
 
 	const [bankAccounts, setBank] = useState([
@@ -69,49 +69,66 @@ export default function UserName() {
 			{bankAccounts.map((account, idx) => {
 				return (
 					<div className="container-fluid my-3">
-						<History account = {account} history={account.history} key={account.accountName}></History>
+						<History
+							account={account}
+							history={account.history}
+							key={account.accountName}
+						></History>
 					</div>
 				);
 			})}
+			<TransferMenu bankAccounts={bankAccounts}></TransferMenu>
 		</div>
 	);
 }
 
-function History({account}) {
+function History({ account }) {
 	const [showHistory, setShowHistory] = useState();
-	const history = account.history
+	const history = account.history;
 	return (
 		<div className="">
-		<div className="row">
-		<h4 className="col">{account.accountName}</h4>
-		<h5 className="col text-end mx-5 text-secondary">${account.amount}</h5>
-			<button
-				className="btn btn-primary col"
-				onClick={() => setShowHistory(!showHistory)}
-			>
-				{!showHistory? (<>Show</>): (<>Hide</>)} Account History
-			</button>
-		</div>
+			<div className="row">
+				<h4 className="col-3">{account.accountName}</h4>
+				<h5 className="col text-end mx-5 text-secondary">
+					${account.amount}
+				</h5>
+				<div className="col-4">
+					<button
+						className="btn btn-primary"
+						onClick={() => setShowHistory(!showHistory)}
+					>
+						{!showHistory ? <>Show</> : <>Hide</>} Account History
+					</button>
+				</div>
+			</div>
+			<BankEdit account={account}></BankEdit>
+
 			<div className="my-2">
-			{showHistory ? (
-				<table className="table table-striped">
-				<thead>
-					<tr>
-						<th scope="col">#</th>
-						<th scope="col">Type</th>
-						<th scope="col">Amount</th>
-						<th scope="col">Date</th>
-						<th scope="col">Recipient</th>
-					</tr>
-				</thead>
-				<tbody>
-					{history.sort((a, b) => a.date < b.date).map((history, idx) => (
-						<HistoryItem history={history} idx={idx}></HistoryItem>
-					))}
-				</tbody>
-			</table>
-			): <></>
-			}
+				{showHistory ? (
+					<table className="table table-striped">
+						<thead>
+							<tr>
+								<th scope="col">#</th>
+								<th scope="col">Type</th>
+								<th scope="col">Amount</th>
+								<th scope="col">Date</th>
+								<th scope="col">Recipient</th>
+							</tr>
+						</thead>
+						<tbody>
+							{history
+								.sort((a, b) => a.date < b.date)
+								.map((history, idx) => (
+									<HistoryItem
+										history={history}
+										idx={idx}
+									></HistoryItem>
+								))}
+						</tbody>
+					</table>
+				) : (
+					<></>
+				)}
 			</div>
 		</div>
 	);
@@ -129,6 +146,158 @@ function HistoryItem({ history, idx }) {
 				<td>{date.toDateString()}</td>
 				<td>{history.recipient}</td>
 			</tr>
+		</>
+	);
+}
+
+function BankEdit({ account }) {
+	const [amount, setAmount] = useState();
+	const [typeSelect, setType] = useState("Deposit");
+
+	function updateAccount(e) {
+		e.preventDefault();
+		// console.log(e);
+	}
+
+	return (
+		<>
+			<form className="row mb-3">
+				<div className="col">
+					<label for="disabledSelect" className="form-label">
+						Type:
+					</label>
+					<select
+						id="disabledSelect"
+						className="form-select"
+						onChange={(e) => {
+							setType(e.target.value);
+						}}
+					>
+						<option>Deposit</option>
+						<option>Withdraw</option>
+					</select>
+				</div>
+				<div className="col">
+					<label for="amount" className="form-label">
+						Amount:
+					</label>
+					<input
+						type="text"
+						id="amount"
+						className="form-control"
+						placeholder="0"
+						value={amount}
+						onChange={(e) => {
+							const re = /^[0-9\b]+$/;
+							if (
+								e.target.value === "" ||
+								re.test(e.target.value)
+							) {
+								setAmount(e.target.value);
+							}
+						}}
+					/>
+				</div>
+				<div className="col">
+					<br></br>
+					<button
+						type="submit"
+						className="btn btn-secondary my-2"
+						onClick={updateAccount}
+					>
+						Submit
+					</button>
+				</div>
+			</form>
+		</>
+	);
+}
+
+function TransferMenu({ bankAccounts }) {
+	const [amount, setAmount] = useState();
+	const [from, setFrom] = useState("");
+	const [to, setTo] = useState("");
+	const ready = true;
+	function updateAccount(e) {
+		e.preventDefault();
+		// console.log(e);
+	}
+	return (
+		<>
+			<h2>Transfer</h2>
+			<form className="row mb-3">
+				<div className="col">
+					<label for="disabledSelect" className="form-label">
+						From:
+					</label>
+					<select
+						id="disabledSelect"
+						className="form-select"
+						onChange={(e) => {
+							setFrom(e.target.value);
+						}}
+					>
+						<option></option>
+
+						{bankAccounts.map((account, idx) => {
+							if (account.accountName !== to) {
+								return <option>{account.accountName}</option>;
+							}
+						})}
+					</select>
+				</div>
+				<div className="col">
+					<label for="disabledSelect" className="form-label">
+						To:
+					</label>
+					<select
+						id="disabledSelect"
+						className="form-select"
+						onChange={(e) => {
+							setTo(e.target.value);
+						}}
+					>
+						<option></option>
+						{bankAccounts.map((account, idx) => {
+							if (account.accountName !== from) {
+								return <option>{account.accountName}</option>;
+							}
+						})}
+					</select>
+				</div>
+				<div className="col">
+					<label for="amount" className="form-label">
+						Amount:
+					</label>
+					<input
+						type="text"
+						id="amount"
+						className="form-control"
+						placeholder="0"
+						value={amount}
+						onChange={(e) => {
+							const re = /^[0-9\b]+$/;
+							if (
+								e.target.value === "" ||
+								re.test(e.target.value)
+							) {
+								setAmount(e.target.value);
+							}
+						}}
+					/>
+				</div>
+				<div className="col">
+					<br></br>
+					<button
+						type="submit"
+						className="btn btn-secondary my-2"
+						onClick={updateAccount}
+						disabled={from === "" || to === ""}
+					>
+						Submit
+					</button>
+				</div>
+			</form>
 		</>
 	);
 }
