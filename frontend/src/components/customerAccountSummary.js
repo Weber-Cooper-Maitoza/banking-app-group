@@ -53,52 +53,73 @@ export default function UserName() {
 
 			setUserName(account.username);
 			setAccess(account.role);
-			setBank(account.accounts)
+			setBank(account.accounts);
 			console.log(account);
 		}
 		login().then(getAccountDetails);
 	}, []);
 
-	return (
-		<div className="container-md">
-			<p>{userName}</p>
+	function showTable(e) {
+		console.log(e);
+	}
 
+	return (
+		<div className="container-md mt-3">
+			<h2>Welcome {userName}</h2>
 			{bankAccounts.map((account, idx) => {
 				return (
-					<>
-						<h3 className="">
-							{account.accountName}
-						</h3>
-						<table className="table table-striped">
-							<thead>
-								<tr>
-									<th scope="col">#</th>
-									<th scope="col">First</th>
-									<th scope="col">Last</th>
-									<th scope="col">Date</th>
-									<th scope="col">Recipient</th>
-
-								</tr>
-							</thead>
-							<tbody>
-								{account.history.map((history, idx) => (
-									<HistoryItem
-										history={history}
-										idx={idx}
-									></HistoryItem>
-								))}
-							</tbody>
-						</table>
-					</>
+					<div className="container-fluid my-3">
+						<History account = {account} history={account.history} key={account.accountName}></History>
+					</div>
 				);
 			})}
 		</div>
 	);
 }
 
+function History({account}) {
+	const [showHistory, setShowHistory] = useState();
+	const history = account.history
+	return (
+		<div className="">
+		<div className="row">
+		<h4 className="col">{account.accountName}</h4>
+		<h5 className="col text-end mx-5 text-secondary">${account.amount}</h5>
+			<button
+				className="btn btn-primary col"
+				onClick={() => setShowHistory(!showHistory)}
+			>
+				{!showHistory? (<>Show</>): (<>Hide</>)} Account History
+			</button>
+		</div>
+			<div className="my-2">
+			{showHistory ? (
+				<table className="table table-striped">
+				<thead>
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Type</th>
+						<th scope="col">Amount</th>
+						<th scope="col">Date</th>
+						<th scope="col">Recipient</th>
+					</tr>
+				</thead>
+				<tbody>
+					{history.sort((a, b) => a.date < b.date).map((history, idx) => (
+						<HistoryItem history={history} idx={idx}></HistoryItem>
+					))}
+				</tbody>
+			</table>
+			): <></>
+			}
+			</div>
+		</div>
+	);
+}
+
 function HistoryItem({ history, idx }) {
 	// console.log(history)
-	const date = new Date(history.date)
+	const date = new Date(history.date);
 	return (
 		<>
 			<tr>
