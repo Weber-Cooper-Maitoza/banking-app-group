@@ -13,25 +13,26 @@ testRoutes.route("/login").post(async (req, res) => {
 		req.session.username = req.body.username
 		req.session.accounts = [
 			{accountName: "Savings", amount: 2000, history: [
-				{type: "Transfer", amount: -400, date: Date('2018-03-24T10:48:30'), recipient: "Checking"},
-				{type: "Withdraw", amount: -800, date: Date(2018, 3, 24, 10, 30, 70), recipient: "User"}, //prefer this method
-				{type: "Deposit", amount: 900, date: Date(2022, 12, 11, 4, 10, 30), recipient: "Savings"}, 
-				{type: "Transaction", amount: -80, date: Date(2022, 12, 11, 4, 10, 30), recipient: "Unknown"}, 
+				{type: "Transfer", amount: -400, date: new Date('2018-03-24T10:48:30'), recipient: "Checking"},
+				{type: "Withdraw", amount: -800, date: new Date(2018, 3, 24, 10, 30, 70), recipient: "User"}, //prefer this method
+				{type: "Deposit", amount: 900, date: new Date(2022, 12, 11, 4, 10, 30), recipient: "Savings"}, 
+				{type: "Transaction", amount: -80, date: new Date(2022, 12, 11, 4, 10, 30), recipient: "Unknown"}, 
 
 			]},
 			{accountName: "Checking", amount: 4000, history:[
-				{type: "Transfer", amount: 400, date: Date('2018-03-24T10:48:30'), recipient: "Checking"},
-				{type: "Transaction", amount: -824.89, date: Date(2022, 12, 11, 4, 10, 30), recipient: "Apple Inc"}, 
+				{type: "Transfer", amount: 400, date: new Date('2018-03-24T10:48:30'), recipient: "Checking"},
+				{type: "Transaction", amount: -824.89, date: new Date(2022, 12, 11, 4, 10, 30), recipient: "Apple Inc"}, 
 			]},
 			{accountName: "Investments", amount: 800, history:[
-				{type: "Transfer", amount: -1200, date: Date('2018-03-24T10:48:30'), recipient: "John Smith"},
+				{type: "Transfer", amount: -1200, date: new Date('2018-03-24T10:48:30'), recipient: "John Smith"},
 
 			]},
 		]
 		req.session.role = roles[0]
 		
+		return res.status(200).json("Game has been started");
 	} catch (err) {
-		return res.status(301).json("Error starting the game " + err);
+		return res.status(301).json("Error logging in" + err);
 	}
 });
 
