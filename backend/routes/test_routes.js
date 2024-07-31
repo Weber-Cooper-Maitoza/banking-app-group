@@ -30,7 +30,7 @@ testRoutes.route("/login").post(async (req, res) => {
 		]
 		req.session.role = roles[0]
 		
-		return res.status(200).json("Game has been started");
+		return res.status(200).json("Loged in");
 	} catch (err) {
 		return res.status(301).json("Error logging in" + err);
 	}
@@ -48,12 +48,9 @@ testRoutes.route("/bankDetails").post(async (req, res) => {
 
 
 testRoutes.route("/accountDetails").post(async (req, res) => {
-
-
 	const details = (req.session.accounts).filter((account)=> (
 		account.accountName == req.body.accountName
 	))
-	
 
 	res.status(200).json({
 		username: req.session.username,
@@ -64,7 +61,6 @@ testRoutes.route("/accountDetails").post(async (req, res) => {
 
 
 testRoutes.route("role").get(async (req, res) => {
-
 	req.status(200).json({
 		role: req.session.role
 	})
@@ -119,6 +115,33 @@ testRoutes.route("deposit").post(async (req, res) => {
 
 	req.status(200).json({
 	})
+})
+
+// TEST ROUTE
+testRoutes.route("createAccount").post(async (req, res) => {
+  try {
+    let db_connect = dbo.getDb();
+    let myobj = {
+			username: req.body.username,
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
+      email: req.body.email,
+      phone: req.body.phone,
+      password: req.body.password,
+      roles: "",
+      // savings: 0,
+      // checking: 0
+    };
+    const check = await db_connect.collection("accounts").findOne({email: req.body.email});
+    // if (check != null) {
+    //   res.json({check: false});
+    //   return;
+    // }
+    db_connect.collection("accounts").insertOne(myobj);
+    res.json({check: true});
+  } catch(err) {
+    throw err;
+  }
 })
 
 module.exports = testRoutes;
