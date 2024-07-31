@@ -4,27 +4,27 @@ import React, { useState, useEffect } from "react";
 function NavBar() {
   return(
     <>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand px-3" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a className="navbar-brand px-3" href="c-account">TBD's Banking App</a>
+        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span className="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item active">
-              <a class="nav-link" href="/">Home</a>
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav">
+            <li className="nav-item active">
+              <a className="nav-link" href="/c-account">Home</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/c-account">Account</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/e-customer-search">Search</a>
+            <li className="nav-item">
+              <a className="nav-link" href="/e-customer-search">Search</a>
             </li>
           </ul>
         </div>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link me-3" href="/login">Login</a>
+        <ul className="navbar-nav">
+          <li className="nav-item">
+            <a className="btn btn-primary btn-sm me-3 " href="/">Login</a>
+          </li>
+          <li className="nav-item">
+            <button type="button" className="btn btn-danger btn-sm">logout</button>
           </li>
         </ul>
       </nav>
