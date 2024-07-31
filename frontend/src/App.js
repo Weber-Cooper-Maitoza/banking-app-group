@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 
 import Login from "./components/login.js";
 import  UserName from "./components/customerAccountSummary.js";
+import CustomerSearch from "./components/customerSearch.js";
 
 
 const App = () => {
@@ -11,6 +12,7 @@ const App = () => {
 			<Routes>
 				<Route path="/" element={<Login />} />
 				<Route path="/c-account" element={<UserName />} />
+				<Route path="/e-customer-search" element={<CustomerSearch />} />
 
 			</Routes>
 		</div>

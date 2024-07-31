@@ -44,26 +44,23 @@ Pages:
 			Shows the all the transactions a user has made 
 	
 	
-	Employee customer search page -- Cooper
+	TODO: Employee customer search page -- Cooper
 		Where the employee will be taken after logged in, 
 		must be logged in to view 
 		enters a customer id to search for customer, if not found displays a no customer found message 
 	
-	employee customer page -- Cooper
+	TODO: employee customer page -- Cooper
 		shows customers balances
 		allows employee to withdraw / deposit from accounts 
 		allows employee to transfer funds to another account (using accounts customerId)
 		check if admin and can change roles 
 		or we could have an employee customer account summary page
 
-	navbar  -- Cooper
-	
-	
+	TODO: navbar  -- Cooper
 
+----------------------------------------------------------------------------------------
 Also if we wanted to not have as many pages..
 Account summary and deposit / withdraw could be combined for the customers 
-	
-	
 	
 Bank accounts should be created by employees / admin. Customers can not create their own account
 	
