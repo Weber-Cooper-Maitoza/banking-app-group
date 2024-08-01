@@ -10,26 +10,8 @@ export default function CustomerSearch() {
   const [role, setRole] = useState("");
   const [customerID, setCustomerID] = useState("");
 
-
-  //TODO:
-  // Where the employee will be taken after logged in, 
-  // must be logged in to view 
-
-
 	useEffect(() => {
-    // FIXME: eventually remove this.
-		async function run() {
-			const login = await fetch(`http://localhost:5001/login`, {
-				method: "POST",
-				credentials: "include",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					username: "Bob",
-				}),
-			});
-
+		async function checkPermissions() {
       const result = await fetch(`http://localhost:5001/accountDetails`, 
         {
           method: "POST",
@@ -41,13 +23,14 @@ export default function CustomerSearch() {
       );
       const response = await result.json();
       if (response.role === 'customer') {
-        navigate("/login");
+        navigate("/");
       } 
       setUserName(response.username);
       setRole(response.role);
 		}
 
-    run();
+    // login().then(checkPermissions);
+		checkPermissions();
 	}, []);
 
   async function submitCustomerSearch(e) {

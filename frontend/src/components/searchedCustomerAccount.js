@@ -47,7 +47,7 @@ export default function CustomerAccount() {
       const response = await result.json();
 			setUserRole(response.role);
       if (response.role === 'customer') {
-        navigate("/login");
+        navigate("/");
       } 
 			return;
 		}

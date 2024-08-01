@@ -21,7 +21,7 @@ function NavBar() {
       const response = await result.json();
 			setRole(response.role);
       if (!response.role) {
-        navigate("/login");
+        navigate("/");
       } 
 			return;
 		}
