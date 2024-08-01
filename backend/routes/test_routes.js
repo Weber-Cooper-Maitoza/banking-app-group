@@ -74,6 +74,7 @@ testRoutes.route("changeRole").post(async (req, res) => {
 	})
 })
 
+
 testRoutes.route("withdraw").post(async (req, res) => {
 	const accountNa = req.body.accountName
 	const totalChange = -req.body.withdrawAmount
@@ -143,5 +144,13 @@ testRoutes.route("createAccount").post(async (req, res) => {
     throw err;
   }
 })
+
+
+testRoutes.route("/logout").get(async (req, res) => {
+	req.session.destroy();
+	let status = "No session set";
+	const resultObj = { status: status };
+	res.json(resultObj);
+  })
 
 module.exports = testRoutes;

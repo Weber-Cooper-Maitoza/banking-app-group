@@ -2,6 +2,21 @@ import React, { useState, useEffect } from "react";
 // import { useNavigate } from "react-router";
 
 function NavBar() {
+  //TODO: have the user have to sign in and only show search if the the role is admin or employee
+  const [role, setRole] = useState()
+
+  useEffect(() => {
+    
+	}, []);
+
+  function logout(){
+    console.log("logout");
+    const response = fetch(`http://localhost:5001/logout`, {
+      method: "GET",
+      credentials: "include",
+    });
+  }
+
   return(
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -24,7 +39,7 @@ function NavBar() {
             <a className="btn btn-primary btn-sm me-3 " href="/">Login</a>
           </li>
           <li className="nav-item">
-            <button type="button" className="btn btn-danger btn-sm">logout</button>
+            <button type="button" className="btn btn-danger btn-sm" onClick={logout}>logout</button>
           </li>
         </ul>
       </nav>

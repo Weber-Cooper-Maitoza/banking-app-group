@@ -40,7 +40,7 @@ export default function CustomerSearch() {
         }
       );
       const response = await result.json();
-      if (response.role == 'customer') {
+      if (response.role === 'customer') {
         navigate("/login");
       } 
       setUserName(response.username);
