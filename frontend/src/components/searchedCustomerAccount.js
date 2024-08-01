@@ -101,6 +101,7 @@ export default function CustomerAccount() {
 					</div>
 				);
 			})}
+			<InsideTransferMenu bankAccounts={bankAccounts}></InsideTransferMenu>
 			<TransferMenu bankAccounts={bankAccounts}></TransferMenu>
 		</div>
 	);
@@ -242,6 +243,95 @@ function BankEdit({ account }) {
 	);
 }
 
+function InsideTransferMenu({ bankAccounts }) {
+	const [amount, setAmount] = useState();
+	const [from, setFrom] = useState("");
+	const [to, setTo] = useState("");
+	const ready = true;
+	function updateAccount(e) {
+		e.preventDefault();
+		// console.log(e);
+	}
+	return (
+		<>
+			<h2>Transfer Within Account</h2>
+			<form className="row mb-3 mx-3">
+				<div className="col">
+					<label for="disabledSelect" className="form-label">
+						From:
+					</label>
+					<select
+						id="disabledSelect"
+						className="form-select"
+						onChange={(e) => {
+							setFrom(e.target.value);
+						}}
+					>
+						<option></option>
+
+						{bankAccounts.map((account, idx) => {
+							if (account.accountName !== to) {
+								return <option>{account.accountName}</option>;
+							}
+						})}
+					</select>
+				</div>
+				<div className="col">
+					<label for="disabledSelect" className="form-label">
+						To:
+					</label>
+					<select
+						id="disabledSelect"
+						className="form-select"
+						onChange={(e) => {
+							setTo(e.target.value);
+						}}
+					>
+						<option></option>
+						{bankAccounts.map((account, idx) => {
+							if (account.accountName !== from) {
+								return <option>{account.accountName}</option>;
+							}
+						})}
+					</select>
+				</div>
+				<div className="col">
+					<label for="amount" className="form-label">
+						Amount:
+					</label>
+					<input
+						type="text"
+						id="amount"
+						className="form-control"
+						placeholder="0"
+						value={amount}
+						onChange={(e) => {
+							const re = /^[0-9\b]+$/;
+							if (
+								e.target.value === "" ||
+								re.test(e.target.value)
+							) {
+								setAmount(e.target.value);
+							}
+						}}
+					/>
+				</div>
+				<div className="col">
+					<br></br>
+					<button
+						type="submit"
+						className="btn btn-secondary my-2"
+						onClick={updateAccount}
+						disabled={from === "" || to === ""}
+					>
+						Submit
+					</button>
+				</div>
+			</form>
+		</>
+	);
+}
+
 function TransferMenu({ bankAccounts }) {
 	const [FromCustomerID, setFromCustomerID] = useState("");
 	const [amount, setAmount] = useState();
@@ -290,9 +380,7 @@ function TransferMenu({ bankAccounts }) {
 						<option></option>
 
 						{bankAccounts.map((account, idx) => {
-							if (account.accountName !== to) {
-								return <option>{account.accountName}</option>;
-							}
+							return <option>{account.accountName}</option>;
 						})}
 					</select>
 				</div>
@@ -309,9 +397,7 @@ function TransferMenu({ bankAccounts }) {
 					>
 						<option></option>
 						{bankAccounts.map((account, idx) => {
-							if (account.accountName !== from) {
-								return <option>{account.accountName}</option>;
-							}
+							return <option>{account.accountName}</option>;			
 						})}
 					</select>
 				</div>

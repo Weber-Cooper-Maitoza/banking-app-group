@@ -165,6 +165,7 @@ function BankEdit({ account }) {
 	function updateAccount(e) {
 		e.preventDefault();
 		console.log(typeSelect)
+		console.log(account)
 		if(typeSelect === "Withdraw"){
 			const response = fetch("http://localhost:5001/withdraw", {
 				method: "POST",

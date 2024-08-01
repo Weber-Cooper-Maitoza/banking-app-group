@@ -125,7 +125,9 @@ testRoutes.route("/deposit").post(async (req, res) => {
 	const accountNa = req.body.accountName
 	const totalChange = req.body.depositAmount
 
-	const details = (req.session.accounts).map((account)=> {
+	const userAccount = req.session.accounts
+
+	const details = (userAccount).map((account)=> {
 		if (account.accountName == accountNa){
 			account.amount += totalChange
 			account.history.push({
@@ -147,7 +149,7 @@ testRoutes.route("/createAccount").post(async (req, res) => {
   try {
     let db_connect = dbo.getDb();
     let myobj = {
-			username: req.body.username,
+		username: req.body.username,
       firstname: req.body.firstname,
       lastname: req.body.lastname,
       email: req.body.email,
@@ -192,6 +194,7 @@ testRoutes.route("/checkCustomerID/:id").post(async (req, res) => {
     throw err;
   }
 });
+
 testRoutes.route("/getCustomerSummary").post(async (req, res) => {
 	try {
 		if (customer.customerid == req.session.customerSearch) {
