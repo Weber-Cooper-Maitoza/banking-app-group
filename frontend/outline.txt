@@ -30,16 +30,18 @@ Pages:
 		User will input their username, password
 		sends all 3 to confirm a succesful login 
 
-	Account summary page -- Coleton
-		Displays the user checking , savings and investment balances
-		button to go to transaction history or deposit/withdraw page
+	
+	Customer Account Detail Page 
+		Account summary page -- Coleton
+			Displays the user checking , savings and investment balances
+			button to go to transaction history or deposit/withdraw page
 
-	Customer deposit/ withdraw page -- Coleton
-		Shows balance of 3 accounts 
-		User selects an account , withdraw or deposit, and amount 
-		
-	Customer transaction history page  -- Coleton
-		Shows the all the transactions a user has made 
+		Customer deposit/ withdraw page -- Coleton
+			Shows balance of 3 accounts 
+			User selects an account , withdraw or deposit, and amount 
+			
+		Customer transaction history page  -- Coleton
+			Shows the all the transactions a user has made 
 	
 	
 	Employee customer search page -- Cooper
@@ -48,20 +50,17 @@ Pages:
 		enters a customer id to search for customer, if not found displays a no customer found message 
 	
 	employee customer page -- Cooper
-		shows customers balances
-		allows employee to withdraw / deposit from accounts 
-		allows employee to transfer funds to another account (using accounts customerId)
-		check if admin and can change roles 
+	  shows customers balances
+		TODO: allows employee to withdraw / deposit from accounts 
+		TODO: allows employee to transfer funds to another account (using accounts customerId)
+		TODO: check if admin and can change roles 
 		or we could have an employee customer account summary page
 
 	navbar  -- Cooper
-	
-	
 
+----------------------------------------------------------------------------------------
 Also if we wanted to not have as many pages..
 Account summary and deposit / withdraw could be combined for the customers 
-	
-	
 	
 Bank accounts should be created by employees / admin. Customers can not create their own account
 	

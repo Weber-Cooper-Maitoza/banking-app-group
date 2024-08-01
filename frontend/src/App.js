@@ -1,19 +1,26 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
+import NavBar from "./components/navbar.js";
 import Login from "./components/login.js";
-import AdminCreate from "./components/admin-create.js"
-import AccountCreate from "./components/create-account.js";
+import UserName from "./components/customerAccountSummary.js";
+import CustomerSearch from "./components/customerSearch.js";
+import CustomerAccount from "./components/searchedCustomerAccount.js";
+
 
 const App = () => {
 	return (
-		<div>
-			<Routes>
-				<Route path="/" element={<Login />} />
-				<Route path="/admin/create" element={<AdminCreate />} />
-				<Route path="/account/create" element={<AccountCreate />} />
-			</Routes>
-		</div>
+		<>
+			<NavBar />
+			<div id="content">
+				<Routes>
+					<Route path="/" element={<Login />} />
+					<Route path="/c-account" element={<UserName />} />
+					<Route path="/e-customer-search" element={<CustomerSearch />} />
+					<Route path="/e-customer-account" element={<CustomerAccount />} />
+				</Routes>
+			</div>
+		</>
 	);
 };
 
