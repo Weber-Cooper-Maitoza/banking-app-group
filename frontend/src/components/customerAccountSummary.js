@@ -164,8 +164,41 @@ function BankEdit({ account }) {
 
 	function updateAccount(e) {
 		e.preventDefault();
-		// console.log(e);
+		console.log(typeSelect)
+		if(typeSelect === "Withdraw"){
+			const response = fetch("http://localhost:5001/withdraw", {
+				method: "POST",
+				credentials: "include",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					accountName: account.accountName,
+					withdrawAmount: amount,
+				})
+			});
+
+			return
+		}
+
+		if(typeSelect === "Deposit"){
+			const response = fetch("http://localhost:5001/deposit", {
+				method: "POST",
+				credentials: "include",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					accountName: account.accountName,
+					withdrawAmount: amount,
+				})
+			});
+
+			return
+			return
+		}
 	}
+	const somrthing  = "hello"
 
 	return (
 		<>
@@ -214,7 +247,8 @@ function BankEdit({ account }) {
 					<br></br>
 					<button
 						type="submit"
-						className="btn btn-secondary my-2"
+						className ={`btn btn-secondary my-2`}
+						
 						onClick={updateAccount}
 						disabled={amount === ""}
 					>
