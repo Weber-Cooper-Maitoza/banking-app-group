@@ -50,11 +50,24 @@ export default function CustomerSearch() {
     run();
 	}, []);
 
-  function submitCustomerSearch(e) {
+  async function submitCustomerSearch(e) {
 		e.preventDefault();
-    console.log("submitted")
     // TODO: enters a customer id to search for customer, 
     // if not found displays a no customer found message 
+		const responseJson = await fetch(`http://localhost:5001/checkCustomerID/${customerID}`, {
+			method: "POST",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+		const result = await responseJson.json();
+		if (!result.check) {
+			window.alert("Could not find user.");
+		} else {
+			navigate("/e-customer-account");
+		}
+
     // TODO: check if there is a customer ID that fits.
     // then take them to the customer over page.
   }
@@ -78,9 +91,9 @@ export default function CustomerSearch() {
 						className="form-control"
 						placeholder="[put placeholder here]"
 						value={customerID}
-						// onChange={(e) => {
-						// 	// setType(e.target.value);
-						// }}
+						onChange={(e) => {
+							setCustomerID(e.target.value);
+						}}
 					>
 					</input>
 				</div>

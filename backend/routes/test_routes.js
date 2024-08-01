@@ -6,6 +6,29 @@ const ObjectId = require("mongodb").ObjectId;
 
 const roles= ['administrator', 'employee', 'customer']
 
+const customer = {
+	firstname: "Cooper",
+	lastname: "Maitoza",
+	customerid: "cm123456789",
+	username: "maito",
+	accounts: [
+		{accountName: "Savings", amount: 0, history: [
+			{type: "Transfer", amount: 400, date: new Date('2018-03-24T10:48:30'), recipient: "Checking"},
+				{type: "Withdraw", amount: -200, date: new Date(2018, 3, 24, 10, 30, 70), recipient: "User"},
+				{type: "Deposit", amount: 200, date: new Date(2022, 12, 11, 4, 10, 30), recipient: "Savings"}, 
+				{type: "Transaction", amount: -400, date: new Date(2022, 12, 11, 4, 10, 30), recipient: "Unknown"},
+		]},
+		{accountName: "Checking", amount: 0, history:[
+			{type: "Transfer", amount: 420, date: new Date('2018-03-24T10:48:30'), recipient: "Checking"},
+			{type: "Transaction", amount: -420, date: new Date(2022, 12, 11, 4, 10, 30), recipient: "Apple Inc"}, 
+		]},
+		{accountName: "Investments", amount: 42, history:[
+			{type: "Transfer", amount: -42, date: new Date('2018-03-24T10:48:30'), recipient: "John Smith"},
+		]}
+	],
+	role: "customer"
+}
+
 //1. route that taks req.session.username and sets session, grabs word from database
 // sets up correctWord and word, returns success status 200
 testRoutes.route("/login").post(async (req, res) => {
@@ -143,7 +166,7 @@ testRoutes.route("createAccount").post(async (req, res) => {
   } catch(err) {
     throw err;
   }
-})
+});
 
 
 testRoutes.route("/logout").get(async (req, res) => {
@@ -151,6 +174,43 @@ testRoutes.route("/logout").get(async (req, res) => {
 	let status = "No session set";
 	const resultObj = { status: status };
 	res.json(resultObj);
-  })
+});
+
+testRoutes.route("/checkCustomerID/:id").post(async (req, res) => {
+  try {
+		if (customer.customerid == req.params.id) {
+			req.session.customerSearch = customer.customerid;
+			res.status(200).json({
+				check: true
+			});
+		} else {
+			req.session.customerSearch = "";
+			res.status(301).json({check: false})
+		}
+  } catch(err) {
+    throw err;
+  }
+});
+testRoutes.route("/getCustomerSummary").post(async (req, res) => {
+	try {
+		if (customer.customerid == req.session.customerSearch) {
+			res.status(200).json({
+				customerid: customer.customerid,
+				firstname: customer.firstname,
+				lastname: customer.lastname,
+				username: customer.username,
+				role: customer.role,
+				accounts: customer.accounts,
+				check: true
+			});
+		} else {
+			res.status(301).json ({
+				check: false
+			})
+		}
+	} catch(err) {
+		throw err;
+	}
+});
 
 module.exports = testRoutes;
