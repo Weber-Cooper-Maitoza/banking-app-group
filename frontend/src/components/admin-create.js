@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import './css/sb-admin-2.css'
 
-export default function Login() {
+export default function AdminCreate() {
     const [form, setForm] = useState({
         userName: "",
         password: "",
+        role: "admin"
     });
     const navigate = useNavigate();
     const searchName = form.userName;
@@ -20,7 +21,7 @@ export default function Login() {
         
         e.preventDefault();
         const info = {...form};
-        const attempt = await fetch("http://localhost:5001/login", {
+        const attempt = await fetch("http://localhost:5001/login", { //
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -30,11 +31,11 @@ export default function Login() {
         })
         if(!attempt.ok){
             window.alert("Incorrect user name or password");
-            setForm({ userName: "", Password: "" });
+            setForm({ userName: "", Password: "",});
             console.log("Bad user name or password");
             return;
         }
-        setForm({ userName: "", Password: "" });
+        setForm({ userName: "", Password: "", role:"" });
         //navigate(`/account/${searchName}`);
     }
 
@@ -42,7 +43,7 @@ export default function Login() {
 
     return (
         <div className= "pt-4 pl-4">
-            <h3>Account Login</h3>
+            <h3>Create Admin Account</h3>
             <form onSubmit={onSubmit}>
                 <div>
                     <label>User Name:</label>
@@ -68,7 +69,7 @@ export default function Login() {
                 <div>
                     <input 
 						type="submit" 
-						value="Login"
+						value="Create Account"
 						className="ml-4"
 					/>
                 </div>
@@ -76,5 +77,3 @@ export default function Login() {
         </div>
     );
 }
-
-

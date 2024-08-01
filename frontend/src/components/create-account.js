@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import './css/sb-admin-2.css'
 
-export default function Login() {
+export default function AccountCreate() {
     const [form, setForm] = useState({
         userName: "",
         password: "",
+        role: ""
     });
     const navigate = useNavigate();
     const searchName = form.userName;
@@ -20,7 +21,7 @@ export default function Login() {
         
         e.preventDefault();
         const info = {...form};
-        const attempt = await fetch("http://localhost:5001/login", {
+        const attempt = await fetch("http://localhost:5001/login", { //
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -30,11 +31,11 @@ export default function Login() {
         })
         if(!attempt.ok){
             window.alert("Incorrect user name or password");
-            setForm({ userName: "", Password: "" });
+            setForm({ userName: "", password: "",});
             console.log("Bad user name or password");
             return;
         }
-        setForm({ userName: "", Password: "" });
+        setForm({ userName: "", Password: "", role:"" });
         //navigate(`/account/${searchName}`);
     }
 
@@ -42,7 +43,7 @@ export default function Login() {
 
     return (
         <div className= "pt-4 pl-4">
-            <h3>Account Login</h3>
+            <h3>Create Account</h3>
             <form onSubmit={onSubmit}>
                 <div>
                     <label>User Name:</label>
@@ -57,18 +58,31 @@ export default function Login() {
                 <div>
                     <label>Password:</label>
                     <input 
-                        type = "text"
+                        type = "password"
                         id = "password"
                         value={form.password}
                         onChange={(e) => updateForm({password: e.target.value })} 
 						className="ml-4"  
                     />
                 </div>
+                <div>
+                    <label>Role:</label>
+                    <select 
+                        id="role"
+                        value={form.role}
+                        onChange={(e) => updateForm({ role: e.target.value })} 
+                        className="ml-4"
+                    >
+                        <option value="admin">Admin</option>
+                        <option value="employee">Employee</option>
+                        <option value="customer">Customer</option>
+                    </select>
+                </div>
                 <br/>
                 <div>
                     <input 
 						type="submit" 
-						value="Login"
+						value="Create Account"
 						className="ml-4"
 					/>
                 </div>
@@ -76,5 +90,3 @@ export default function Login() {
         </div>
     );
 }
-
-

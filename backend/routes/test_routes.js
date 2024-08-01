@@ -6,8 +6,6 @@ const ObjectId = require("mongodb").ObjectId;
 
 const roles= ['administrator', 'employee', 'customer']
 
-//1. route that taks req.session.username and sets session, grabs word from database
-// sets up correctWord and word, returns success status 200
 testRoutes.route("/login").post(async (req, res) => {
 	try {
 		req.session.username = req.body.username
