@@ -58,7 +58,7 @@ export default function CustomerAccount() {
 				},
 			});
 			const account = await response.json();
-			if (account.check == false) {
+			if (account.check === false) {
 				navigate("/e-customer-search");
 			} 
 			setCustomer(account);

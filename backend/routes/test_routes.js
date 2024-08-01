@@ -83,22 +83,22 @@ testRoutes.route("/accountDetails").post(async (req, res) => {
 });
 
 
-testRoutes.route("role").get(async (req, res) => {
-	req.status(200).json({
+testRoutes.route("/role").get(async (req, res) => {
+	res.status(200).json({
 		role: req.session.role
 	})
 })
 
-testRoutes.route("changeRole").post(async (req, res) => {
+testRoutes.route("/changeRole").post(async (req, res) => {
 	req.session.role = req.body.role
 
-	req.status(200).json({
+	res.status(200).json({
 		role: req.session.role
 	})
 })
 
 
-testRoutes.route("withdraw").post(async (req, res) => {
+testRoutes.route("/withdraw").post(async (req, res) => {
 	const accountNa = req.body.accountName
 	const totalChange = -req.body.withdrawAmount
 
@@ -114,13 +114,14 @@ testRoutes.route("withdraw").post(async (req, res) => {
 		}
 		return account
 	})
+	req.session.accounts
 
-	req.status(200).json({
+	res.status(200).json({
 	})
 })
 
 
-testRoutes.route("deposit").post(async (req, res) => {
+testRoutes.route("/deposit").post(async (req, res) => {
 	const accountNa = req.body.accountName
 	const totalChange = req.body.depositAmount
 
@@ -137,12 +138,12 @@ testRoutes.route("deposit").post(async (req, res) => {
 		return account
 	})
 
-	req.status(200).json({
+	res.status(200).json({
 	})
 })
 
 // TEST ROUTE
-testRoutes.route("createAccount").post(async (req, res) => {
+testRoutes.route("/createAccount").post(async (req, res) => {
   try {
     let db_connect = dbo.getDb();
     let myobj = {
