@@ -42,7 +42,7 @@ export default function UserName() {
 			return;
 		}
 		async function getAccountDetails() {
-			const response = await fetch("http://localhost:5001/bankDetails", {
+			const response = await fetch("http://localhost:5001/accountDetails", {
 				method: "POST",
 				credentials: "include",
 				headers: {

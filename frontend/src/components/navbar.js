@@ -62,6 +62,7 @@ function NavBar() {
       method: "GET",
       credentials: "include",
     });
+    navigate("/")
   }
 
   return(

@@ -71,14 +71,14 @@ testRoutes.route("/bankDetails").post(async (req, res) => {
 
 
 testRoutes.route("/accountDetails").post(async (req, res) => {
-	const details = (req.session.accounts).filter((account)=> (
-		account.accountName == req.body.accountName
-	))
+	// const details = (req.session.accounts).filter((account)=> (
+	// 	account.accountName == req.body.accountName
+	// ))
 
 	res.status(200).json({
 		username: req.session.username,
 		role: req.session.role,
-		accounts: details
+		accounts: req.session.accounts
 	});
 });
 
