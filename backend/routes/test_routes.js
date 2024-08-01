@@ -6,7 +6,7 @@ const ObjectId = require("mongodb").ObjectId;
 
 const roles= ['administrator', 'employee', 'customer']
 
-const customer = {
+var customer = {
 	firstname: "Cooper",
 	lastname: "Maitoza",
 	customerid: "cm123456789",
@@ -213,5 +213,15 @@ testRoutes.route("/getCustomerSummary").post(async (req, res) => {
 		throw err;
 	}
 });
+
+testRoutes.route("/changeCustomerRole").post(async (req, res) => {
+	try {
+		customer.role = req.body.role
+
+		res.status(200).json({ role: customer.role});
+	} catch(err) {
+		throw err;
+	}
+})
 
 module.exports = testRoutes;

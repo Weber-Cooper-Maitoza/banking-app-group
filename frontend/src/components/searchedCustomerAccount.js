@@ -5,6 +5,7 @@ import "./css/bootstrap.css";
 
 export default function CustomerAccount() {
 	const navigate = useNavigate();
+	const [userRole, setUserRole] = useState("");
 
 	const [customer, setCustomer] = useState(
 		{
@@ -44,6 +45,7 @@ export default function CustomerAccount() {
         }
       );
       const response = await result.json();
+			setUserRole(response.role);
       if (response.role === 'customer') {
         navigate("/login");
       } 
@@ -69,10 +71,6 @@ export default function CustomerAccount() {
 		checkPermissions().then(getAccountDetails);
 	}, []);
 
-	function showTable(e) {
-		console.log(e);
-	}
-
 	return (
 		<div className="container-md mt-3">
 			<div className="row">
@@ -84,10 +82,7 @@ export default function CustomerAccount() {
 					Role: <span className="text-secondary">{customer.role}</span>
 				</h4>
 			</div>
-			<div className="row">
-				<h2 className="mt-4">Change Role</h2>
-
-			</div>
+			<ChangeRole role={userRole} customer={customer} />
 
 			<h2 className="mt-4">Bank Details</h2>
 			{bankAccounts.map((account, idx) => {
@@ -345,6 +340,68 @@ function TransferMenu({ bankAccounts }) {
 						disabled={from === "" || to === ""}
 					>
 						Submit
+					</button>
+				</div>
+			</form>
+		</>
+	);
+}
+
+function ChangeRole({ role }) {
+	const [changedRole, setChangedRole] = useState("customer");
+
+	async function onSubmit(e) {
+		e.preventDefault();
+
+		if (role == "administrator") {
+			const result = await fetch(`http://localhost:5001/changeCustomerRole`, 
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+					body: JSON.stringify({
+						role: changedRole
+					})
+        }
+      );
+			window.location.reload();
+		}
+	}
+
+	if (role != "administrator") return null;
+
+	return(
+		<>
+			<div className="row">
+				<h2 className="mt-4">Change Role</h2>
+			</div>
+			<form className="row mb-3 mx-3">
+				<div className="col">
+					<label for="roleSelect" className="form-label">
+						Role:
+					</label>
+					<select 
+						id="roleSelect" 
+						className="form-select"
+						onChange={(e) => {
+							setChangedRole(e.target.value);
+						}}
+					>
+						<option value="customer">customer</option>
+						<option value="employee">employee</option>
+						<option value="administrator">administrator</option>
+					</select>
+				</div>
+				<div className="col">
+					<br></br>
+					<button
+						type="submit"
+						className="btn btn-secondary my-2"
+						onClick={onSubmit}
+					>
+						Change
 					</button>
 				</div>
 			</form>
