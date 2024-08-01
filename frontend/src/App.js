@@ -5,7 +5,7 @@ import NavBar from "./components/navbar.js";
 import Login from "./components/login.js";
 import UserName from "./components/customerAccountSummary.js";
 import CustomerSearch from "./components/customerSearch.js";
-import CustomerAccount from "./components/customerAccount.js";
+import CustomerAccount from "./components/searchedCustomerAccount.js";
 
 
 const App = () => {

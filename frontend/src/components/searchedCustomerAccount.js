@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 
 import "./css/bootstrap.css";
 
-export default function UserName() {
+export default function CustomerAccount() {
 	const navigate = useNavigate();
 
 	const [customer, setCustomer] = useState(
@@ -16,9 +16,6 @@ export default function UserName() {
 			accounts: []
 		}
 	)
-
-	const [userName, setUserName] = useState("");
-	const [accessType, setAccess] = useState(" ");
 
 	const [bankAccounts, setBank] = useState([
 		{
@@ -65,8 +62,6 @@ export default function UserName() {
 				navigate("/e-customer-search");
 			} 
 			setCustomer(account);
-			setUserName(account.username);
-			setAccess(account.role);
 			setBank(account.accounts);
 			console.log(account);
 		}
@@ -80,15 +75,21 @@ export default function UserName() {
 
 	return (
 		<div className="container-md mt-3">
-			<div className="col">
-				<h3 className="col">Search For: {customer.firstname}</h3>
-				<h4 className="col text-secondary">
-					Role:{" "}
-					{accessType.charAt(0).toUpperCase() + accessType.slice(1)}
+			<div className="row">
+				<h3 className="col">Customer: <span className="text-secondary">{customer.firstname} {customer.lastname}</span></h3>
+				<h4 className="col">
+					Username: <span className="text-secondary">{customer.username}</span>
+				</h4>
+				<h4 className="col">
+					Role: <span className="text-secondary">{customer.role}</span>
 				</h4>
 			</div>
-			<h2 className="mt-4">Bank Details</h2>
+			<div className="row">
+				<h2 className="mt-4">Change Role</h2>
 
+			</div>
+
+			<h2 className="mt-4">Bank Details</h2>
 			{bankAccounts.map((account, idx) => {
 				return (
 					<div className="container-fluid my-3">
@@ -242,6 +243,7 @@ function BankEdit({ account }) {
 }
 
 function TransferMenu({ bankAccounts }) {
+	const [FromCustomerID, setFromCustomerID] = useState("");
 	const [amount, setAmount] = useState();
 	const [from, setFrom] = useState("");
 	const [to, setTo] = useState("");
@@ -252,8 +254,28 @@ function TransferMenu({ bankAccounts }) {
 	}
 	return (
 		<>
-			<h2>Transfer</h2>
+			<h2>Transfer From Customer</h2>
 			<form className="row mb-3 mx-3">
+				<div className="col">
+					<form className="row mb-3">
+						<div className="col">
+							<label for="customerIDSearch" className="form-label">
+								Customer ID:
+							</label>
+							<input
+								type="text"
+								id="customerIDSearch"
+								className="form-control"
+								placeholder="ID"
+								value={FromCustomerID}
+								onChange={(e) => {
+									setFromCustomerID(e.target.value);
+								}}
+							>
+							</input>
+						</div>
+					</form>
+				</div>
 				<div className="col">
 					<label for="disabledSelect" className="form-label">
 						From:

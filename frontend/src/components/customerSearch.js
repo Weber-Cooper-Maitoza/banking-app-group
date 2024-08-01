@@ -89,7 +89,7 @@ export default function CustomerSearch() {
 						type="text"
 						id="customerIDSearch"
 						className="form-control"
-						placeholder="[put placeholder here]"
+						placeholder="ID"
 						value={customerID}
 						onChange={(e) => {
 							setCustomerID(e.target.value);
