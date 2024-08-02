@@ -7,9 +7,11 @@ import "./css/bootstrap.css";
 export default function UserName() {
 	const navigate = useNavigate();
 
-	const [userName, setUserName] = useState("");
-	const [accessType, setAccess] = useState(" ");
-
+	const [account, setAccount] = useState({
+		firstname: "",
+		lastname: "",
+		role: "",
+	});
 	const [bankAccounts, setBank] = useState([
 		{
 			accountName: "None",
@@ -26,55 +28,55 @@ export default function UserName() {
 	]);
 
 	useEffect(() => {
-		// async function login() {
-		// 	console.log("hello");
-		// 	const login = await fetch(`http://localhost:5001/login`, {
-		// 		method: "POST",
-		// 		credentials: "include",
-		// 		headers: {
-		// 			"Content-Type": "application/json",
-		// 		},
-		// 		body: JSON.stringify({
-		// 			username: "Bob",
-		// 		}),
-		// 	});
-		// 	console.log(login);
-		// 	return;
-		// }
 		async function getAccountDetails() {
-			const response = await fetch("http://localhost:5001/accountDetails", {
-				method: "POST",
-				credentials: "include",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
+			const response = await fetch(
+				"http://localhost:5001/accountDetails",
+				{
+					method: "POST",
+					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
 			const account = await response.json();
+			console.log(account);
 			if (account.username == null) {
 				navigate("/");
 			} else {
-				setUserName(account.username);
-				setAccess(account.role);
+				setAccount(account);
 				setBank(account.accounts);
 				console.log(account);
 			}
 		}
 		// login().then(getAccountDetails);
-		getAccountDetails()
-	}, []);
+		getAccountDetails();
+	}, [navigate]);
 
-	function showTable(e) {
-		console.log(e);
-	}
+
 
 	return (
 		<div className="container-md mt-3">
 			<div className="col">
-				<h3 className="col">Welcome {userName}</h3>
-				<h4 className="col text-secondary">
-					Role:{" "}
-					{accessType.charAt(0).toUpperCase() + accessType.slice(1)}
-				</h4>
+				<h2>Welcome!</h2>
+				<div className="row mx-1">
+					<h4 className="col">
+						Customer:{" "}
+						<span className="text-secondary">
+							{account.firstname} {account.lastname}
+						</span>
+					</h4>
+					<h4 className="col">
+						Username:{" "}
+						<span className="text-secondary">
+							{account.username}
+						</span>
+					</h4>
+					<h4 className="col">
+						Role:{" "}
+						<span className="text-secondary">{account.role}</span>
+					</h4>
+				</div>
 			</div>
 			<h2 className="mt-4">Bank Details</h2>
 
@@ -166,12 +168,12 @@ function BankEdit({ account }) {
 	const [amount, setAmount] = useState("");
 	const [typeSelect, setType] = useState("Deposit");
 
-	function updateAccount(e) {
+	async function updateAccount(e) {
 		e.preventDefault();
-		console.log(typeSelect)
-		console.log(account)
-		if(typeSelect === "Withdraw"){
-			const response = fetch("http://localhost:5001/withdraw", {
+		console.log(typeSelect);
+		console.log(account);
+		if (typeSelect === "Withdraw") {
+			const response = await fetch("http://localhost:5001/withdraw", {
 				method: "POST",
 				credentials: "include",
 				headers: {
@@ -180,14 +182,15 @@ function BankEdit({ account }) {
 				body: JSON.stringify({
 					accountName: account.accountName,
 					withdrawAmount: amount,
-				})
+				}),
 			});
+			console.log(response)
 
-			return
+			return;
 		}
 
-		if(typeSelect === "Deposit"){
-			const response = fetch("http://localhost:5001/deposit", {
+		if (typeSelect === "Deposit") {
+			const response = await fetch("http://localhost:5001/deposit", {
 				method: "POST",
 				credentials: "include",
 				headers: {
@@ -196,14 +199,12 @@ function BankEdit({ account }) {
 				body: JSON.stringify({
 					accountName: account.accountName,
 					withdrawAmount: amount,
-				})
+				}),
 			});
-
-			return
-			return
+			console.log(response)
+			return;
 		}
 	}
-	const somrthing  = "hello"
 
 	return (
 		<>
@@ -252,8 +253,7 @@ function BankEdit({ account }) {
 					<br></br>
 					<button
 						type="submit"
-						className ={`btn btn-secondary my-2`}
-						
+						className={`btn btn-secondary my-2`}
 						onClick={updateAccount}
 						disabled={amount === ""}
 					>
@@ -269,7 +269,6 @@ function TransferMenu({ bankAccounts }) {
 	const [amount, setAmount] = useState();
 	const [from, setFrom] = useState("");
 	const [to, setTo] = useState("");
-	const ready = true;
 	function updateAccount(e) {
 		e.preventDefault();
 		// console.log(e);
@@ -295,6 +294,7 @@ function TransferMenu({ bankAccounts }) {
 							if (account.accountName !== to) {
 								return <option>{account.accountName}</option>;
 							}
+							return <></>
 						})}
 					</select>
 				</div>
@@ -314,6 +314,7 @@ function TransferMenu({ bankAccounts }) {
 							if (account.accountName !== from) {
 								return <option>{account.accountName}</option>;
 							}
+							return <></>
 						})}
 					</select>
 				</div>

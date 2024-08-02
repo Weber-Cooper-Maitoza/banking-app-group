@@ -33,7 +33,7 @@ var customer = {
 // sets up correctWord and word, returns success status 200
 testRoutes.route("/login").post(async (req, res) => {
 	try {
-		req.session.username = req.body.username
+		req.session.username = req.body.userName
 		req.session.accounts = [
 			{accountName: "Savings", amount: 2000, history: [
 				{type: "Transfer", amount: -400, date: new Date('2018-03-24T10:48:30'), recipient: "Checking"},
@@ -52,23 +52,14 @@ testRoutes.route("/login").post(async (req, res) => {
 			]},
 		]
 		req.session.role = roles[0]
+		req.session.firstname = "Savannah"
+		req.session.lastname = "Childs"
 		
 		return res.status(200).json("Loged in");
 	} catch (err) {
 		return res.status(301).json("Error logging in" + err);
 	}
 });
-
-testRoutes.route("/bankDetails").post(async (req, res) => {
-
-	res.status(200).json({
-		username: req.session.username,
-		role: req.session.role,
-		accounts: req.session.accounts
-
-	});
-});
-
 
 testRoutes.route("/accountDetails").post(async (req, res) => {
 	// const details = (req.session.accounts).filter((account)=> (
@@ -78,7 +69,9 @@ testRoutes.route("/accountDetails").post(async (req, res) => {
 	res.status(200).json({
 		username: req.session.username,
 		role: req.session.role,
-		accounts: req.session.accounts
+		accounts: req.session.accounts,
+		firstname: req.session.firstname,
+		lastname: req.session.lastname,
 	});
 });
 

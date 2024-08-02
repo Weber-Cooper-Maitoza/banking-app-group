@@ -31,7 +31,7 @@ export default function CustomerSearch() {
 
     // login().then(checkPermissions);
 		checkPermissions();
-	}, []);
+	}, [navigate]);
 
   async function submitCustomerSearch(e) {
 		e.preventDefault();

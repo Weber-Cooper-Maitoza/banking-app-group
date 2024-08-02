@@ -3,18 +3,22 @@ import { useNavigate } from "react-router";
 
 import "./css/bootstrap.css";
 
-export default function CustomerAccount() {
+export default function UserName() {
 	const navigate = useNavigate();
-	const [userRole, setUserRole] = useState("");
 
-	const [customer, setCustomer] = useState({
-		customerid: "",
-		firstname: "",
-		lastname: "",
-		username: "",
-		role: "",
-		accounts: [],
-	});
+	const [customer, setCustomer] = useState(
+		{
+			customerid: "",
+			firstname: "",
+			lastname: "",
+			username: "",
+			role: "",
+			accounts: []
+		}
+	)
+
+	const [userName, setUserName] = useState("");
+	const [accessType, setAccess] = useState(" ");
 
 	const [bankAccounts, setBank] = useState([
 		{
@@ -33,36 +37,36 @@ export default function CustomerAccount() {
 
 	useEffect(() => {
 		async function checkPermissions() {
-			const result = await fetch(`http://localhost:5001/accountDetails`, {
+			const result = await fetch(`http://localhost:5001/accountDetails`, 
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }
+      );
+      const response = await result.json();
+      if (response.role === 'customer') {
+        navigate("/login");
+      } 
+			return;
+		}
+		async function getAccountDetails() {
+			const response = await fetch("http://localhost:5001/getCustomerSummary", {
 				method: "POST",
 				credentials: "include",
 				headers: {
 					"Content-Type": "application/json",
 				},
 			});
-			const response = await result.json();
-			setUserRole(response.role);
-			if (response.role === "customer") {
-				navigate("/");
-			}
-			return;
-		}
-		async function getAccountDetails() {
-			const response = await fetch(
-				"http://localhost:5001/getCustomerSummary",
-				{
-					method: "POST",
-					credentials: "include",
-					headers: {
-						"Content-Type": "application/json",
-					},
-				}
-			);
 			const account = await response.json();
 			if (account.check === false) {
 				navigate("/e-customer-search");
-			}
+			} 
 			setCustomer(account);
+			setUserName(account.username);
+			setAccess(account.role);
 			setBank(account.accounts);
 			console.log(account);
 		}
@@ -70,27 +74,18 @@ export default function CustomerAccount() {
 		checkPermissions().then(getAccountDetails);
 	}, [navigate]);
 
+
 	return (
 		<div className="container-md mt-3">
-			<div className="row">
-				<h3 className="col">
-					Customer:{" "}
-					<span className="text-secondary">
-						{customer.firstname} {customer.lastname}
-					</span>
-				</h3>
-				<h4 className="col">
-					Username:{" "}
-					<span className="text-secondary">{customer.username}</span>
-				</h4>
-				<h4 className="col">
+			<div className="col">
+				<h3 className="col">Search For: {customer.firstname}</h3>
+				<h4 className="col text-secondary">
 					Role:{" "}
-					<span className="text-secondary">{customer.role}</span>
+					{accessType.charAt(0).toUpperCase() + accessType.slice(1)}
 				</h4>
 			</div>
-			<ChangeRole role={userRole} customerRole={customer.role} />
-
 			<h2 className="mt-4">Bank Details</h2>
+
 			{bankAccounts.map((account, idx) => {
 				return (
 					<div className="container-fluid my-3">
@@ -102,9 +97,6 @@ export default function CustomerAccount() {
 					</div>
 				);
 			})}
-			<InsideTransferMenu
-				bankAccounts={bankAccounts}
-			></InsideTransferMenu>
 			<TransferMenu bankAccounts={bankAccounts}></TransferMenu>
 		</div>
 	);
@@ -246,17 +238,18 @@ function BankEdit({ account }) {
 	);
 }
 
-function InsideTransferMenu({ bankAccounts }) {
+function TransferMenu({ bankAccounts }) {
 	const [amount, setAmount] = useState();
 	const [from, setFrom] = useState("");
 	const [to, setTo] = useState("");
+	const ready = true;
 	function updateAccount(e) {
 		e.preventDefault();
 		// console.log(e);
 	}
 	return (
 		<>
-			<h2>Transfer Within Account</h2>
+			<h2>Transfer</h2>
 			<form className="row mb-3 mx-3">
 				<div className="col">
 					<label for="disabledSelect" className="form-label">
@@ -275,7 +268,6 @@ function InsideTransferMenu({ bankAccounts }) {
 							if (account.accountName !== to) {
 								return <option>{account.accountName}</option>;
 							}
-							return <></>;
 						})}
 					</select>
 				</div>
@@ -295,7 +287,6 @@ function InsideTransferMenu({ bankAccounts }) {
 							if (account.accountName !== from) {
 								return <option>{account.accountName}</option>;
 							}
-							return <></>;
 						})}
 					</select>
 				</div>
@@ -329,178 +320,6 @@ function InsideTransferMenu({ bankAccounts }) {
 						disabled={from === "" || to === ""}
 					>
 						Submit
-					</button>
-				</div>
-			</form>
-		</>
-	);
-}
-
-function TransferMenu({ bankAccounts }) {
-	const [FromCustomerID, setFromCustomerID] = useState("");
-	const [amount, setAmount] = useState();
-	const [from, setFrom] = useState("");
-	const [to, setTo] = useState("");
-	function updateAccount(e) {
-		e.preventDefault();
-		// console.log(e);
-	}
-	return (
-		<>
-			<h2>Transfer To Another Customer</h2>
-			<form className="row mb-3 mx-3">
-				<div className="col">
-					<form className="row mb-3">
-						<div className="col">
-							<label
-								for="customerIDSearch"
-								className="form-label"
-							>
-								Customer ID:
-							</label>
-							<input
-								type="text"
-								id="customerIDSearch"
-								className="form-control"
-								placeholder="ID"
-								value={FromCustomerID}
-								onChange={(e) => {
-									setFromCustomerID(e.target.value);
-								}}
-							></input>
-						</div>
-					</form>
-				</div>
-				<div className="col">
-					<label for="disabledSelect" className="form-label">
-						From:
-					</label>
-					<select
-						id="disabledSelect"
-						className="form-select"
-						onChange={(e) => {
-							setFrom(e.target.value);
-						}}
-					>
-						<option></option>
-
-						{bankAccounts.map((account, idx) => {
-							return <option>{account.accountName}</option>;
-						})}
-					</select>
-				</div>
-				<div className="col">
-					<label for="disabledSelect" className="form-label">
-						To:
-					</label>
-					<select
-						id="disabledSelect"
-						className="form-select"
-						onChange={(e) => {
-							setTo(e.target.value);
-						}}
-					>
-						<option></option>
-						{bankAccounts.map((account, idx) => {
-							return <option>{account.accountName}</option>;
-						})}
-					</select>
-				</div>
-				<div className="col">
-					<label for="amount" className="form-label">
-						Amount:
-					</label>
-					<input
-						type="text"
-						id="amount"
-						className="form-control"
-						placeholder="0"
-						value={amount}
-						onChange={(e) => {
-							const re = /^[0-9\b]+$/;
-							if (
-								e.target.value === "" ||
-								re.test(e.target.value)
-							) {
-								setAmount(e.target.value);
-							}
-						}}
-					/>
-				</div>
-				<div className="col">
-					<br></br>
-					<button
-						type="submit"
-						className="btn btn-secondary my-2"
-						onClick={updateAccount}
-						disabled={from === "" || to === ""}
-					>
-						Submit
-					</button>
-				</div>
-			</form>
-		</>
-	);
-}
-
-function ChangeRole({ role, customerRole }) {
-	const [changedRole, setChangedRole] = useState("");
-
-	async function onSubmit(e) {
-		e.preventDefault();
-
-		if (role === "administrator") {
-			const result = await fetch(
-				`http://localhost:5001/changeCustomerRole`,
-				{
-					method: "POST",
-					credentials: "include",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						role: changedRole,
-					}),
-				}
-			);
-			window.location.reload();
-			console.log(result)
-		}
-	}
-
-	if (role !== "administrator") return null;
-	console.log(role);
-	return (
-		<>
-			<div className="row">
-				<h2 className="mt-4">Change Role</h2>
-			</div>
-			<form className="row mb-3 mx-3">
-				<div className="col">
-					<label for="roleSelect" className="form-label">
-						Role:
-					</label>
-					<select
-						id="roleSelect"
-						className="form-select"
-						onChange={(e) => {
-							setChangedRole(e.target.value);
-						}}
-						value={!changedRole ? customerRole: changedRole}
-					>
-						<option value="customer">customer</option>
-						<option value="employee">employee</option>
-						<option value="administrator">administrator</option>
-					</select>
-				</div>
-				<div className="col">
-					<br></br>
-					<button
-						type="submit"
-						className="btn btn-secondary my-2"
-						onClick={onSubmit}
-					>
-						Change
 					</button>
 				</div>
 			</form>

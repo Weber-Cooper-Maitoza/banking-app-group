@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import './css/bootstrap.css'
 
@@ -14,6 +14,18 @@ export default function Login() {
             return {...prevJsonObj, ...jsonObj}
         });
     }
+    useEffect(() => {
+        async function logout(){
+            console.log("logout");
+            const response = fetch(`http://localhost:5001/logout`, {
+              method: "GET",
+              credentials: "include",
+            });
+            console.log(response)
+        }
+        logout()
+
+    },[])
 
     async function onSubmit(e){
         
