@@ -1,35 +1,77 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import './css/bootstrap.css'
 
 export default function Login() {
-	const navigate = useNavigate();
-    // FIXME: eventually remove this.
-	async function login() {
-		const login = await fetch(`http://localhost:5001/login`, {
-			method: "POST",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				username: "Bob",
-			}),
-		});
-		alert("logged in.")
-		navigate("/c-account");
-	}
+    const [form, setForm] = useState({
+        userName: "",
+        password: "",
+    });
+    const navigate = useNavigate();
 
-	return (
-		<div>
-      <p>TODO: Create login. </p>
-			<p>auto loging in as bob</p>
-			<button
-						type="submit"
+    function updateForm(jsonObj) {
+        return setForm((prevJsonObj) => {
+            return {...prevJsonObj, ...jsonObj}
+        });
+    }
+
+    async function onSubmit(e){
+        
+        e.preventDefault();
+        const info = {...form};
+        const attempt = await fetch("http://localhost:5001/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(info),
+            credentials: "include"
+        })
+        if(!attempt.ok){
+            window.alert("Incorrect user name or password");
+            setForm({ userName: "", Password: "" });
+            console.log("Bad user name or password");
+            return;
+        }
+        setForm({ userName: "", Password: "" });
+        navigate("/c-account");
+    }
+
+    
+
+    return (
+        <div className= "container mt-4">
+            <h3 className="pt-3">Account Login</h3>
+            <form onSubmit={onSubmit}>
+                <div className="col-3">
+                    <label>User Name:</label>
+                    <input 
+                        type = "text"
+                        id = "userName"
+                        value={form.userName}
+                        onChange={(e) => updateForm({userName: e.target.value })}
+						className="form-control"    
+                    />
+                </div>
+                <div className="col-3">
+                    <label>Password:</label>
+                    <input 
+                        type = "password"
+                        id = "password"
+                        value={form.password}
+                        onChange={(e) => updateForm({password: e.target.value })} 
+						className="form-control"  
+                    />
+                </div>
+                <br/>
+                <div className="mx-5">
+                    <input 
+						type="submit" 
+						value="Login"
 						className="btn btn-secondary my-2"
-						onClick={login}
-					>
-						login
-					</button>
-		</div>
-	);
+					/>
+                </div>
+            </form>
+        </div>
+    );
 }

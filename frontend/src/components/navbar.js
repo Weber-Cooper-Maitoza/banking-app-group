@@ -80,6 +80,12 @@ function NavBar() {
             <li className="nav-item">
               <a className="nav-link" href="/e-customer-search">Search User</a>
             </li>
+            <li className="nav-item">
+              <a className="nav-link" href="/createAdmin">Create Admin</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" href="/createAccount">Create Account</a>
+            </li>
           </ul>
         </div>
         <ul className="navbar-nav">
@@ -90,6 +96,7 @@ function NavBar() {
             <button type="button" className="btn btn-danger btn-sm" onClick={logout}>logout</button>
           </li>
         </ul>
+        
       </nav>
     </>
   );
