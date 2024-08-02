@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import './css/sb-admin-2.css'
+import './css/bootstrap.css'
 
 export default function Login() {
     const [form, setForm] = useState({
@@ -8,7 +8,6 @@ export default function Login() {
         password: "",
     });
     const navigate = useNavigate();
-    const searchName = form.userName;
 
     function updateForm(jsonObj) {
         return setForm((prevJsonObj) => {
@@ -35,41 +34,41 @@ export default function Login() {
             return;
         }
         setForm({ userName: "", Password: "" });
-        //navigate(`/account/${searchName}`);
+        navigate("/c-account");
     }
 
     
 
     return (
-        <div className= "pt-4 pl-4">
-            <h3>Account Login</h3>
+        <div className= "container mt-4">
+            <h3 className="pt-3">Account Login</h3>
             <form onSubmit={onSubmit}>
-                <div>
+                <div className="col-3">
                     <label>User Name:</label>
                     <input 
                         type = "text"
                         id = "userName"
                         value={form.userName}
                         onChange={(e) => updateForm({userName: e.target.value })}
-						className="ml-2"    
+						className="form-control"    
                     />
                 </div>
-                <div>
+                <div className="col-3">
                     <label>Password:</label>
                     <input 
-                        type = "text"
+                        type = "password"
                         id = "password"
                         value={form.password}
                         onChange={(e) => updateForm({password: e.target.value })} 
-						className="ml-4"  
+						className="form-control"  
                     />
                 </div>
                 <br/>
-                <div>
+                <div className="mx-5">
                     <input 
 						type="submit" 
 						value="Login"
-						className="ml-4"
+						className="btn btn-secondary my-2"
 					/>
                 </div>
             </form>
