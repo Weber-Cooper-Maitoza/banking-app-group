@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import "./css/bootstrap.css";
 
 export default function UserName() {
-	// const navigate = useNavigate();
+	const navigate = useNavigate();
 
 	const [userName, setUserName] = useState("");
 	const [accessType, setAccess] = useState(" ");
@@ -26,21 +26,21 @@ export default function UserName() {
 	]);
 
 	useEffect(() => {
-		async function login() {
-			console.log("hello");
-			const login = await fetch(`http://localhost:5001/login`, {
-				method: "POST",
-				credentials: "include",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					username: "Bob",
-				}),
-			});
-			console.log(login);
-			return;
-		}
+		// async function login() {
+		// 	console.log("hello");
+		// 	const login = await fetch(`http://localhost:5001/login`, {
+		// 		method: "POST",
+		// 		credentials: "include",
+		// 		headers: {
+		// 			"Content-Type": "application/json",
+		// 		},
+		// 		body: JSON.stringify({
+		// 			username: "Bob",
+		// 		}),
+		// 	});
+		// 	console.log(login);
+		// 	return;
+		// }
 		async function getAccountDetails() {
 			const response = await fetch("http://localhost:5001/accountDetails", {
 				method: "POST",
@@ -50,13 +50,17 @@ export default function UserName() {
 				},
 			});
 			const account = await response.json();
-
-			setUserName(account.username);
-			setAccess(account.role);
-			setBank(account.accounts);
-			console.log(account);
+			if (account.username == null) {
+				navigate("/");
+			} else {
+				setUserName(account.username);
+				setAccess(account.role);
+				setBank(account.accounts);
+				console.log(account);
+			}
 		}
-		login().then(getAccountDetails);
+		// login().then(getAccountDetails);
+		getAccountDetails()
 	}, []);
 
 	function showTable(e) {
