@@ -113,7 +113,8 @@ export default function AccountCreate() {
                         onChange={(e) => updateForm({ role: e.target.value })}
                         className="form-control"
                     >
-                        <option value="admin">Admin</option>
+                        <option></option>
+                        <option value="administrator">Administrator</option>
                         <option value="employee">Employee</option>
                         <option value="customer">Customer</option>
                     </select>
