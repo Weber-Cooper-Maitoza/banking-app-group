@@ -32,7 +32,10 @@ const dbo = require("./db/conn");
 
 app.use(express.json());
 
+// FIXME: Remove
 app.use(require("./routes/test_routes.js"));
+
+app.use(require("./routes/bankRoutes.js"));
 
 
 const port = process.env.PORT;
