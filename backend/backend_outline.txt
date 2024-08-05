@@ -1,0 +1,62 @@
+PORT 5001
+
+Database: bank
+let db_connect = dbo.getDb().collection("accounts");
+
+session{
+	username: string
+	hash of password:
+	role: string
+
+	for employees and administrator searching accounts:
+	check: bool
+	customerId: string
+}
+
+database{
+	firstname: "",
+	lastname: "",
+	customerid: "",
+
+	username: "",
+	passHash: "",
+
+	accounts: [
+		{accountName: "Savings", amount: 0, history: [
+			{type: "", amount: Double, date: new Date(''), recipient: ""},
+			
+		]},
+		{accountName: "Checking", amount: 0, history:[
+			{type: "", amount: Double, date: new Date(''), recipient: ""},
+		]},
+		{accountName: "Investments", amount: 0, history:[
+			{type: "", amount: Double, date: new Date(''), recipient: ""},
+		]}
+	],
+	role: ""
+
+}
+
+
+Brody - Login and Create Account
+	Login - hash the password and check if the details are correct return error code on fail otherwise success code
+	Create account - take all the details and create the account also should generate an ID example of ID: could be first name letter last name letter + 5 random digits confirm ID doesn't exist in database before completing. 
+	Logout - delete the session 
+
+Coleton - customer controls
+	Deposit - 
+	Withdraw - 
+	Get account details -
+
+Cooper - backend for employee 
+	Transfer between two accounts - Use the customerId and an ID passed from the user to transfer money between the accounts 
+	Deposit within customer account - Deposit a set amount into the account also make sure to add a time stamp to the transaction details 
+	Withdraw from customer account - Withdraw a set amount into the account also make sure to add a time stamp to the transaction details 
+	View customer account - Get the account of the customerID
+	
+
+
+Other thats needs to be done: 
+	change role for customerId
+
+	Implement into the frontend
