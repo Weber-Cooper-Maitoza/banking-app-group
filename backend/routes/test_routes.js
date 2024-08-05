@@ -31,6 +31,7 @@ var customer = {
 
 //1. route that taks req.session.username and sets session, grabs word from database
 // sets up correctWord and word, returns success status 200
+// Brody
 testRoutes.route("/login").post(async (req, res) => {
 	try {
 		req.session.username = req.body.userName
@@ -61,6 +62,7 @@ testRoutes.route("/login").post(async (req, res) => {
 	}
 });
 
+//Brody
 testRoutes.route("/accountDetails").post(async (req, res) => {
 	// const details = (req.session.accounts).filter((account)=> (
 	// 	account.accountName == req.body.accountName
@@ -82,6 +84,7 @@ testRoutes.route("/role").get(async (req, res) => {
 	})
 })
 
+
 testRoutes.route("/changeRole").post(async (req, res) => {
 	req.session.role = req.body.role
 
@@ -90,7 +93,7 @@ testRoutes.route("/changeRole").post(async (req, res) => {
 	})
 })
 
-
+// Coleton
 testRoutes.route("/withdraw").post(async (req, res) => {
 	const accountNa = req.body.accountName
 	const totalChange = -req.body.withdrawAmount
@@ -113,7 +116,7 @@ testRoutes.route("/withdraw").post(async (req, res) => {
 	})
 })
 
-
+//Coleton
 testRoutes.route("/deposit").post(async (req, res) => {
 	const accountNa = req.body.accountName
 	const totalChange = req.body.depositAmount
@@ -137,7 +140,7 @@ testRoutes.route("/deposit").post(async (req, res) => {
 	})
 })
 
-// TEST ROUTE
+// Brody
 testRoutes.route("/createAccount").post(async (req, res) => {
   try {
     let db_connect = dbo.getDb();
@@ -172,6 +175,9 @@ testRoutes.route("/logout").get(async (req, res) => {
 	res.json(resultObj);
 });
 
+
+
+//Copper
 testRoutes.route("/checkCustomerID/:id").post(async (req, res) => {
   try {
 		if (customer.customerid == req.params.id) {
@@ -188,6 +194,7 @@ testRoutes.route("/checkCustomerID/:id").post(async (req, res) => {
   }
 });
 
+//
 testRoutes.route("/getCustomerSummary").post(async (req, res) => {
 	try {
 		if (customer.customerid == req.session.customerSearch) {
@@ -210,6 +217,7 @@ testRoutes.route("/getCustomerSummary").post(async (req, res) => {
 	}
 });
 
+//
 testRoutes.route("/changeCustomerRole").post(async (req, res) => {
 	try {
 		customer.role = req.body.role
