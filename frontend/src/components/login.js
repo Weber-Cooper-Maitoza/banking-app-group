@@ -30,13 +30,14 @@ export default function Login() {
     async function onSubmit(e) {
         e.preventDefault();
         const info = { ...form };
+        const loginInfo = { userName: form.userName, password: form.password}
         const attempt = await fetch("http://localhost:5001/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(info),
-            credentials: "include"
+            credentials: "include",
+            body: JSON.stringify(loginInfo),
         });
 
         if (!attempt.ok) {
