@@ -74,89 +74,64 @@ bank.route("/createAccount").post(async (req, res) => {
   }
 });
 
-bank.route("/checkCustomerID/:id").post(async (req, res) => {
-  try {
-    const check = await db_connect.collection("accounts").findOne({customerid: req.params.id});
-    if (check != null) {
-      res.json({check: false});
-      return;
+
+
+bank.route("/cu-deposit").post(async (req, res) =>{
+  try{
+    if(!req.session.username){
+      return res.status(301).json("Not Logged In")
     }
-    req.session.searchedCustomerID = req.params.id;
-    res.json({check: true});
-		// if (customer.customerid == req.params.id) {
-		// 	req.session.customerSearch = customer.customerid;
-		// 	res.status(200).json({
-		// 		check: true
-		// 	});
-		// } else {
-		// 	req.session.customerSearch = "";
-		// 	res.status(301).json({check: false})
-		// }
-  } catch(err) {
+    const accountNa = req.body.accountName
+    const totalChange = req.body.depositAmount
+
+    const db_connect = dbo.getDb().collection("words");
+
+    const bankDetails = await db_connect.findOne(
+      {username: req.session.username, passHash: req.session.passHash}
+    )
+
+    const details = (bankDetails.account).map((account)=> {
+      if (account.accountName == accountNa){
+        account.amount += totalChange
+        account.history.push({
+          type: "Deposit",
+          amount: totalChange,
+          date: Date.now(),
+          recipient: account.accountName,
+        })
+      }
+    })
+    const x = await db_connect.findOneAndReplace({username: req.session.username, passHash: req.session.passHash}, details)
+
+	res.status(200).json({
+    x
+	})
+
+  }catch(err){
     throw err;
   }
 });
 
-bank.route("/employee/transfer/:id").post(async (req, res) => {
-  try {
+bank.route("/cu-accountDetails").post(async (req, res) =>{
+  try{
+    if(!req.session.username){
+      return res.status(301).json("Not Logged In")
+    }
+    const accountNa = req.body.accountName
+    const totalChange = req.body.depositAmount
 
-    // 1. get session.searchedCustomerID's account
-    // 2. get transfer customerID's account
-    // 3. withdraw amount from transfer customer
-      // 3.1. check if amount is not negitive from account.
-      // 3.2. if not, set check to true.
-    // 4. if transfer customer has enough funds for transfer (if check is true),
-    //    add amount to session.searchedCustomerID's account.
+    const db_connect = dbo.getDb().collection("words");
 
-    let db_connect = dbo.getDb();
-    // steps 1 & 2.
-    let transferAccount = await db_connect.collection("accounts").findOne({ customerid: req.params.id });
-    let currentCustomerAccount = await db_connect.collection("accounts").findOne({ customerid: req.session.searchedCustomerID });
+    const bankDetails = await db_connect.findOne(
+      {username: req.session.username, passHash: req.session.passHash}
+    )
 
-    // if (req.body.savings != null && req.body.checking == null) {
-    //   if (!(/^\+?(0|[1-9]\d*)$/.test(req.body.savings) || /^\+?(0|[1-9]\d*)$/.test(req.body.checking))) {
-    //     res.json("ERROR: savings is not a valid number.");
-    //     return;
-    //   }
-
-    //   if (newSavings["savings"] - parseInt(req.body.savings) < 0) {
-    //     res.json("ERROR: Tried to withdraw more money than available.")
-    //     return;
-    //   }
-    //   newSavings["savings"] -= parseInt(req.body.savings);
-    //   newChecking["checking"] += parseInt(req.body.savings);
-
-    // } else if (req.body.savings == null && req.body.checking != null) {
-    //   if (!(/^\+?(0|[1-9]\d*)$/.test(req.body.savings) || /^\+?(0|[1-9]\d*)$/.test(req.body.checking))) {
-    //     res.json("ERROR: savings is not a valid number.");
-    //     return;
-    //   }
-
-    //   if (newChecking["checking"] - parseInt(req.body.checking) < 0) {
-    //     res.json("ERROR: Tried to withdraw more money than available.")
-    //     return;
-    //   }
-    //   newChecking["checking"] -= parseInt(req.body.checking);
-    //   newSavings["savings"] += parseInt(req.body.checking);
-
-    // } else {
-    //   res.json("ERROR: do not know what to transfer.")
-    //   return;
-    // }
-
-    // let newvalues = {
-    //   $set: {
-    //     savings: newSavings["savings"],
-    //     checking: newChecking["checking"]
-    //   },
-    // };
-
-    // await db_connect.collection("accounts").updateOne(myquery, newvalues);
-    // const result = await db_connect.collection("accounts").findOne(myquery, {projection: {_id: 0, savings: 1, checking: 1}});
-    // res.json(result);
-  } catch(err) {
-    throw err;
+    return res.status(200).json(bankDetails)
+  }catch(err){
+    throw err
   }
 });
+
+
 
 module.exports = bank
