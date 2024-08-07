@@ -12,12 +12,12 @@ bank.route("/login").post(async (req, res) => {
     let myquery = { 
       username: req.body.username,
       passHash: req.body.passHash
-      // username: "",
-      // passHash: "",
     };
     const result = await db_connect.collection("accounts").findOne(myquery);
     if (result != null) {
       check = true;
+      req.session.username = req.body.username;
+      req.session.role = result.role;
     } else {
       check = false;
     }
@@ -32,23 +32,6 @@ bank.route("/createAccount").post(async (req, res) => {
   try {
     let db_connect = dbo.getDb();
     let myobj = {
-      // firstname: "",
-      // lastname: "",
-      // luustomerid: "",
-      // username: "",
-      // passHash: "",
-      // accounts: [
-      //   {accountName: "Savings", amount: 0, history: [
-      //     {type: "", amount: Double, date: new Date(''), recipient: ""},
-      //   ]},
-      //   {accountName: "Checking", amount: 0, history:[
-      //     {type: "", amount: Double, date: new Date(''), recipient: ""},
-      //   ]},
-      //   {accountName: "Investments", amount: 0, history:[
-      //     {type: "", amount: Double, date: new Date(''), recipient: ""},
-      //   ]}
-      // ],
-      // role: ""
       firstname: req.body.firstname,
       lastname: req.body.lastname,
       customerid: req.body.customerid,
@@ -74,27 +57,70 @@ bank.route("/createAccount").post(async (req, res) => {
   }
 });
 
+bank.route("/getSessionRole").post(async (req, res) => {
+  try {
+    if (!req.session.role) {
+      res.status(200).json({ role: req.session.role, check: true});
+      return;
+    }
+    res.status(301).json({ check: false });
+  } catch(err) {
+    throw err;
+  }
+});
+
+bank.route("/accountDetails/:id").post(async (req, res) => {
+  try {
+    let db_connect = dbo.getDb();
+    let myquery = { customerid: req.params.id };
+    const options = { projection: { _id: 0, passHash: 0 }}
+    const result = await db_connect.collection("accounts").findOne(myquery, options);
+    res.status(200).json(result);
+  } catch(err) {
+    throw err;
+  }
+});
+
+
+
+// COOPER's ROUTES
+
 bank.route("/checkCustomerID/:id").post(async (req, res) => {
   try {
+    let db_connect = dbo.getDb("bank");
     const check = await db_connect.collection("accounts").findOne({customerid: req.params.id});
-    if (check != null) {
+    if (check == null) {
       res.json({check: false});
       return;
     }
     req.session.searchedCustomerID = req.params.id;
     res.json({check: true});
-		// if (customer.customerid == req.params.id) {
-		// 	req.session.customerSearch = customer.customerid;
-		// 	res.status(200).json({
-		// 		check: true
-		// 	});
-		// } else {
-		// 	req.session.customerSearch = "";
-		// 	res.status(301).json({check: false})
-		// }
+
   } catch(err) {
     throw err;
   }
+});
+
+bank.route("/getCustomerSummary").post(async (req, res) => {
+	try {
+		if (customer.customerid == req.session.customerSearch) {
+			res.status(200).json({
+				customerid: customer.customerid,
+				firstname: customer.firstname,
+				lastname: customer.lastname,
+				username: customer.username,
+				role: customer.role,
+				accounts: customer.accounts,
+				check: true
+			});
+		} else {
+			res.status(301).json ({
+				check: false
+			})
+		}
+	} catch(err) {
+		throw err;
+	}
 });
 
 bank.route("/employee/transfer/:id").post(async (req, res) => {

@@ -341,10 +341,38 @@ function TransferMenu({ bankAccounts }) {
 	const [amount, setAmount] = useState();
 	const [from, setFrom] = useState("");
 	const [to, setTo] = useState("");
-	function updateAccount(e) {
+
+	async function updateAccount(e) {
 		e.preventDefault();
-		// console.log(e);
+		const check = await fetch(`http://localhost:5001/checkCustomerID/${FromCustomerID}`, {
+			method: "POST",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+		const result = await check.json();
+		if (!result.check) {
+			window.alert("Could not find user.");
+			return;
+		} 
+		const response = await fetch(
+			`http://localhost:5001/employee/transfer/${FromCustomerID}`,
+			{
+				method: "POST",
+				credentials: "include",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: {
+					from: from,
+					to: to,
+					amount: amount
+				}
+			}
+		);
 	}
+
 	return (
 		<>
 			<h2>Transfer To Another Customer</h2>
