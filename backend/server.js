@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 
 const session = require("express-session");
+const crypto = require("crypto");
 const MongoStore = require("connect-mongo");
 
 require("dotenv").config({ path: "./config.env"});
@@ -33,7 +34,7 @@ const dbo = require("./db/conn");
 app.use(express.json());
 
 // FIXME: Remove
-app.use(require("./routes/test_routes.js"));
+//app.use(require("./routes/test_routes.js"));
 
 app.use(require("./routes/bankRoutes.js"));
 
