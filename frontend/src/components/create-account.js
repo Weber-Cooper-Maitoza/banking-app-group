@@ -4,7 +4,7 @@ import './css/bootstrap.css'
 
 export default function AccountCreate() {
     const [form, setForm] = useState({
-        userName: "",
+        username: "",
         firstname: "",
         lastname: "",
         email: "",
@@ -23,7 +23,7 @@ export default function AccountCreate() {
     async function onSubmit(e) {
         e.preventDefault();
         const info = { ...form };
-        const attempt = await fetch("http://localhost:5001/login", {
+        const attempt = await fetch("http://localhost:5001/createAccount", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -33,11 +33,11 @@ export default function AccountCreate() {
         });
         if (!attempt.ok) {
             window.alert("Incorrect user name or password");
-            setForm({ userName: "", firstname: "", lastname: "", email: "", phone: "", password: "", role: "" });
+            setForm({ username: "", firstname: "", lastname: "", email: "", phone: "", password: "", role: "" });
             console.log("Bad user name or password");
             return;
         }
-        setForm({ userName: "", firstname: "", lastname: "", email: "", phone: "", password: "", role: "" });
+        setForm({ username: "", firstname: "", lastname: "", email: "", phone: "", password: "", role: "" });
         navigate("/c-account");
     }
 
@@ -50,8 +50,8 @@ export default function AccountCreate() {
                     <input 
                         type="text"
                         id="userName"
-                        value={form.userName}
-                        onChange={(e) => updateForm({ userName: e.target.value })}
+                        value={form.username}
+                        onChange={(e) => updateForm({ username: e.target.value })}
                         className="form-control"
                     />
                 </div>
@@ -101,7 +101,7 @@ export default function AccountCreate() {
                         type="password"
                         id="password"
                         value={form.password}
-                        onChange={(e) => updateForm({ password: e.target.value })}
+                        onChange={(e) => updateForm({ passHash: e.target.value })}
                         className="form-control"
                     />
                 </div>
