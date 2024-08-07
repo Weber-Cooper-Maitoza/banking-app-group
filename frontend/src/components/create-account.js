@@ -101,7 +101,7 @@ export default function AccountCreate() {
                         type="password"
                         id="password"
                         value={form.password}
-                        onChange={(e) => updateForm({ passHash: e.target.value })}
+                        onChange={(e) => updateForm({ password: e.target.value })}
                         className="form-control"
                     />
                 </div>
