@@ -85,13 +85,13 @@ testRoutes.route("/role").get(async (req, res) => {
 })
 
 
-testRoutes.route("/changeRole").post(async (req, res) => {
-	req.session.role = req.body.role
+// testRoutes.route("/changeRole").post(async (req, res) => {
+// 	req.session.role = req.body.role
 
-	res.status(200).json({
-		role: req.session.role
-	})
-})
+// 	res.status(200).json({
+// 		role: req.session.role
+// 	})
+// })
 
 // Coleton
 testRoutes.route("/withdraw").post(async (req, res) => {
@@ -168,12 +168,12 @@ testRoutes.route("/deposit").post(async (req, res) => {
 // });
 
 
-testRoutes.route("/logout").get(async (req, res) => {
-	req.session.destroy();
-	let status = "No session set";
-	const resultObj = { status: status };
-	res.json(resultObj);
-});
+// testRoutes.route("/logout").get(async (req, res) => {
+// 	req.session.destroy();
+// 	let status = "No session set";
+// 	const resultObj = { status: status };
+// 	res.json(resultObj);
+// });
 
 
 
@@ -218,14 +218,14 @@ testRoutes.route("/logout").get(async (req, res) => {
 // });
 
 //
-testRoutes.route("/changeCustomerRole").post(async (req, res) => {
-	try {
-		customer.role = req.body.role
+// testRoutes.route("/changeCustomerRole").post(async (req, res) => {
+// 	try {
+// 		customer.role = req.body.role
 
-		res.status(200).json({ role: customer.role});
-	} catch(err) {
-		throw err;
-	}
-})
+// 		res.status(200).json({ role: customer.role});
+// 	} catch(err) {
+// 		throw err;
+// 	}
+// })
 
 module.exports = testRoutes;

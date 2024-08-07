@@ -73,8 +73,8 @@ bank.post("/login", async (req, res) => {
         return res.status(400).json("The username or password was not entered in correctly");
       }
   
-      const hashedPassword = password;
-      if (hashedPassword !== user.password) {
+      const hashedPassword = hashPass(password);
+      if (hashedPassword !== user.passHash) {
         return res.status(400).json("The username or password was not entered in correctly");
       }
   
@@ -102,11 +102,11 @@ bank.post("/logout", async (req, res) => {
     });
 });
 
-// FIXME: Account Details Route
-bank.route("/accountDetails/:id").post(async (req, res) => {
+// Account details route.
+bank.route("/accountDetails").post(async (req, res) => {
   try {
     let db_connect = dbo.getDb();
-    let myquery = { customerid: req.params.id };
+    let myquery = { customerId:  req.session.user.customerId };
     const options = { projection: { _id: 0, passHash: 0 }}
     const result = await db_connect.collection("accounts").findOne(myquery, options);
     res.status(200).json(result);
@@ -115,20 +115,17 @@ bank.route("/accountDetails/:id").post(async (req, res) => {
   }
 });
 
-
-
 // Check Customer ID Route
 bank.route("/checkCustomerID/:id").post(async (req, res) => {
   try {
     let db_connect = dbo.getDb("bank");
-    const check = await db_connect.collection("accounts").findOne({customerid: req.params.id});
+    const check = await db_connect.collection("accounts").findOne({customerId: req.params.id});
     if (check == null) {
       res.json({check: false});
       return;
     }
     req.session.searchedCustomerID = req.params.id;
-    res.json({check: true});
-
+    res.status(200).json({check: true});
   } catch(err) {
     throw err;
   }
@@ -137,25 +134,30 @@ bank.route("/checkCustomerID/:id").post(async (req, res) => {
 // Get Customer Summary Route
 bank.route("/getCustomerSummary").post(async (req, res) => {
 	try {
-		if (customer.customerid == req.session.customerSearch) {
-			res.status(200).json({
-				customerid: customer.customerid,
-				firstname: customer.firstname,
-				lastname: customer.lastname,
-				username: customer.username,
-				role: customer.role,
-				accounts: customer.accounts,
-				check: true
-			});
-		} else {
-			res.status(301).json ({
-				check: false
-			})
-		}
+    let db_connect = dbo.getDb();
+    const options = { projection: { _id: 0, passHash: 0 }}
+    const customerInfo = await db_connect.collection("accounts").findOne({customerId: req.session.searchedCustomerID}, options);
+    res.status(200).json(customerInfo);
 	} catch(err) {
 		throw err;
 	}
 });
+
+// Change customer role via admin access.
+bank.route("/changeCustomerRole").post(async (req, res) => {
+  try {
+    let db_connect = dbo.getDb();
+    let changeRole = {
+      $set: {
+        role: req.body.role
+      }
+    };
+    const result = db_connect.collection("accounts").updateOne({customerId: req.session.searchedCustomerID}, changeRole);
+    res.status(200).json(result);
+  } catch(err) {
+    throw err;
+  }
+})
 
 // Transfer Funds from one account to another Route.
 bank.route("/employee/transfer/:id").post(async (req, res) => {
@@ -171,21 +173,9 @@ bank.route("/employee/transfer/:id").post(async (req, res) => {
 
     let db_connect = dbo.getDb();
     // steps 1 & 2.
-    let transferAccount = await db_connect.collection("accounts").findOne({ customerid: req.params.id });
-    let currentCustomerAccount = await db_connect.collection("accounts").findOne({ customerid: req.session.searchedCustomerID });
+    let transferAccount = await db_connect.collection("accounts").findOne({ customerId: req.params.id });
+    let currentCustomerAccount = await db_connect.collection("accounts").findOne({ customerId: req.session.searchedCustomerID });
 
-    // if (req.body.savings != null && req.body.checking == null) {
-    //   if (!(/^\+?(0|[1-9]\d*)$/.test(req.body.savings) || /^\+?(0|[1-9]\d*)$/.test(req.body.checking))) {
-    //     res.json("ERROR: savings is not a valid number.");
-    //     return;
-    //   }
-
-    //   if (newSavings["savings"] - parseInt(req.body.savings) < 0) {
-    //     res.json("ERROR: Tried to withdraw more money than available.")
-    //     return;
-    //   }
-    //   newSavings["savings"] -= parseInt(req.body.savings);
-    //   newChecking["checking"] += parseInt(req.body.savings);
   } catch(err) {
     throw err;
   }
