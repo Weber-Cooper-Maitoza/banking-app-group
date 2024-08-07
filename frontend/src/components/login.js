@@ -14,18 +14,18 @@ export default function Login() {
             return {...prevJsonObj, ...jsonObj}
         });
     }
-    useEffect(() => {
-        async function logout(){
-            console.log("logout");
-            const response = fetch(`http://localhost:5001/logout`, {
-              method: "GET",
-              credentials: "include",
-            });
-            console.log(response)
-        }
-        logout()
+    // useEffect(() => {
+    //     async function logout(){
+    //         console.log("logout");
+    //         const response = fetch(`http://localhost:5001/logout`, {
+    //           method: "GET",
+    //           credentials: "include",
+    //         });
+    //         console.log(response)
+    //     }
+    //     logout()
 
-    },[])
+    // },[])
 
     async function onSubmit(e){
         
@@ -41,7 +41,7 @@ export default function Login() {
         })
         if(!attempt.ok){
             window.alert("Incorrect user name or password");
-            setForm({ userName: "", Password: "" });
+            setForm({ userName: "", password: "" });
             console.log("Bad user name or password");
             return;
         }
