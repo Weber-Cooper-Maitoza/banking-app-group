@@ -5,7 +5,7 @@ let db_connect = dbo.getDb().collection("accounts");
 
 session{
 	username: string
-	hash of password:
+	passHash: hash for password 
 	role: string ['administrator', 'employee', 'customer']
 
 	for employees and administrator searching accounts:

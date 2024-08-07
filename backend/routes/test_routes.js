@@ -55,7 +55,7 @@ testRoutes.route("/login").post(async (req, res) => {
 		req.session.role = roles[0]
 		req.session.firstname = "Savannah"
 		req.session.lastname = "Childs"
-		
+
 		return res.status(200).json("Loged in");
 	} catch (err) {
 		return res.status(301).json("Error logging in" + err);
