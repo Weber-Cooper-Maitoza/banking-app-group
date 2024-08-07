@@ -23,7 +23,7 @@ export default function AccountCreate() {
     async function onSubmit(e) {
         e.preventDefault();
         const info = { ...form };
-        const attempt = await fetch("http://localhost:5001/login", {
+        const attempt = await fetch("http://localhost:5001/createAccount", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
