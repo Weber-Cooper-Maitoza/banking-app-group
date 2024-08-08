@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router";
 
 // import './css/sb-admin-2.css'
@@ -13,18 +13,7 @@ export default function UserName() {
 		role: "",
 	});
 	const [bankAccounts, setBank] = useState([
-		{
-			accountName: "None",
-			amount: 0,
-			history: [
-				{
-					type: "None",
-					amount: 0,
-					date: Date(1999, 12, 12, 12, 12, 12),
-					recipient: "Null",
-				},
-			],
-		},
+
 	]);
 
 	useEffect(() => {
@@ -53,7 +42,12 @@ export default function UserName() {
 		getAccountDetails();
 	}, [navigate]);
 
+	const handleAccountUpdate = (newBankDetails) => {
+		console.log("hello", newBankDetails)
+		setBank(newBankDetails);
+		console.log("hlo", bankAccounts)
 
+	};
 
 	return (
 		<div className="container-md mt-3">
@@ -82,23 +76,29 @@ export default function UserName() {
 
 			{bankAccounts.map((account, idx) => {
 				return (
-					<div className="container-fluid my-3">
-						<History
-							account={account}
-							history={account.history}
-							key={account.accountName}
-						></History>
+					<div className="container-fluid my-3" key={account.accountName}>
+						<History accountDetails={account} />
+
 					</div>
 				);
 			})}
-			<TransferMenu bankAccounts={bankAccounts}></TransferMenu>
+			<TransferMenu bankAccounts={bankAccounts} onUpdate={handleAccountUpdate}></TransferMenu>
 		</div>
 	);
 }
 
-function History({ account }) {
+function History({ accountDetails }) {
+	
 	const [showHistory, setShowHistory] = useState();
-	const history = account.history;
+	const [account, setAccount] = useState(accountDetails)
+	useEffect(() => {
+		setAccount(accountDetails);
+	  }, [accountDetails]);
+
+	const handleAccountUpdate = (updatedAccount) => {
+		setAccount(updatedAccount);
+	  };
+	
 	return (
 		<div className="container">
 			<div className="row">
@@ -115,7 +115,7 @@ function History({ account }) {
 					</button>
 				</div>
 			</div>
-			<BankEdit account={account}></BankEdit>
+			<BankEdit accountDetails={account} onUpdate={handleAccountUpdate}></BankEdit>
 
 			<div className="my-2">
 				{showHistory ? (
@@ -130,12 +130,13 @@ function History({ account }) {
 							</tr>
 						</thead>
 						<tbody>
-							{history
+							{(account.history)
 								.sort((a, b) => a.date < b.date)
 								.map((history, idx) => (
 									<HistoryItem
 										history={history}
 										idx={idx}
+										key={idx}
 									></HistoryItem>
 								))}
 						</tbody>
@@ -164,47 +165,68 @@ function HistoryItem({ history, idx }) {
 	);
 }
 
-function BankEdit({ account }) {
+function BankEdit({ accountDetails, onUpdate }) {
 	const [amount, setAmount] = useState("");
 	const [typeSelect, setType] = useState("Deposit");
+	const [account, setAccount] = useState(accountDetails)
 
-	async function updateAccount(e) {
-		e.preventDefault();
-		console.log(typeSelect);
-		console.log(account);
-		if (typeSelect === "Withdraw") {
-			const response = await fetch("http://localhost:5001/withdraw", {
-				method: "POST",
-				credentials: "include",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					accountName: account.accountName,
-					withdrawAmount: amount,
-				}),
+
+	const updateAccount = useCallback(
+		async (event) => {
+		  event.preventDefault();
+		  console.log(account);
+	
+		  let response;
+		  if (typeSelect === "Withdraw") {
+			console.log(typeSelect);
+
+			response = await fetch("http://localhost:5001/cu-withdraw", {
+			  method: "POST",
+			  credentials: "include",
+			  headers: {
+				"Content-Type": "application/json",
+			  },
+			  body: JSON.stringify({
+				accountName: account.accountName,
+				withdrawAmount: amount,
+			  }),
 			});
-			console.log(response)
 
-			return;
-		}
-
-		if (typeSelect === "Deposit") {
-			const response = await fetch("http://localhost:5001/deposit", {
-				method: "POST",
-				credentials: "include",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					accountName: account.accountName,
-					withdrawAmount: amount,
-				}),
+			if(response.status === 301){
+				window.alert("Can't Withdraw into negative")
+				return
+			}
+			const data = await response.json();
+			console.log(data.selectedAccount);
+			setAccount(data.selectedAccount);
+			onUpdate(data.selectedAccount); // Update the parent component
+			console.log(account);
+			
+		  }
+	
+		  if (typeSelect === "Deposit") {
+			response = await fetch("http://localhost:5001/cu-deposit", {
+			  method: "POST",
+			  credentials: "include",
+			  headers: {
+				"Content-Type": "application/json",
+			  },
+			  body: JSON.stringify({
+				accountName: account.accountName,
+				depositAmount: amount,
+			  }),
 			});
-			console.log(response)
-			return;
-		}
-	}
+			const data = await response.json();
+			console.log(data.selectedAccount);
+			setAccount(data.selectedAccount);
+			onUpdate(data.selectedAccount); // Update the parent component
+			console.log(account);
+		  }
+		  setAmount("")
+		},
+		[account, amount, typeSelect, onUpdate]
+	  );
+
 
 	return (
 		<>
@@ -265,14 +287,41 @@ function BankEdit({ account }) {
 	);
 }
 
-function TransferMenu({ bankAccounts }) {
-	const [amount, setAmount] = useState();
+function TransferMenu({ bankAccounts, onUpdate}) {
+	const [amount, setAmount] = useState("");
 	const [from, setFrom] = useState("");
 	const [to, setTo] = useState("");
-	function updateAccount(e) {
+	const updateAccount = useCallback( async (e) => {
+		console.log("hhhhhhh")
+
 		e.preventDefault();
-		// console.log(e);
-	}
+		const response = await fetch("http://localhost:5001/cu-transfer", {
+			method: "POST",
+			credentials: "include",
+			headers: {
+			  "Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+			  from: from,
+			  amount: amount,
+			  to: to
+			}),
+		  });
+		  console.log(response)
+		  if(response.status === 301){
+			console.log("error")
+			window.alert(`Can't Transfer ${from} can not be negative`)
+			return;
+		  }
+		  const data = await response.json()
+		  console.log(data)
+		onUpdate(data.returnValue)
+		setAmount("")
+		setFrom("")
+		setTo("")
+	}, [amount, from, to, onUpdate])
+
+
 	return (
 		<>
 			<h2>Transfer</h2>
@@ -288,7 +337,7 @@ function TransferMenu({ bankAccounts }) {
 							setFrom(e.target.value);
 						}}
 					>
-						<option></option>
+						<option selected = {from === "" ? "selected" : ""} ></option>
 
 						{bankAccounts.map((account, idx) => {
 							if (account.accountName !== to) {
@@ -309,7 +358,7 @@ function TransferMenu({ bankAccounts }) {
 							setTo(e.target.value);
 						}}
 					>
-						<option></option>
+						<option selected = {to === "" ? "selected" : ""}></option>
 						{bankAccounts.map((account, idx) => {
 							if (account.accountName !== from) {
 								return <option>{account.accountName}</option>;

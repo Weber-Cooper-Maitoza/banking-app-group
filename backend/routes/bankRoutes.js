@@ -163,13 +163,6 @@ bank.route("/changeCustomerRole").post(async (req, res) => {
 bank.route("/employee/transfer/:id").post(async (req, res) => {
   try {
 
-    // 1. get session.searchedCustomerID's account
-    // 2. get transfer customerID's account
-    // 3. withdraw amount from transfer customer
-      // 3.1. check if amount is not negitive from account.
-      // 3.2. if not, set check to true.
-    // 4. if transfer customer has enough funds for transfer (if check is true),
-    //    add amount to session.searchedCustomerID's account.
 
     let db_connect = dbo.getDb();
     // steps 1 & 2.

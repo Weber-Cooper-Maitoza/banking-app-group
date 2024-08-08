@@ -5,7 +5,7 @@ let db_connect = dbo.getDb().collection("accounts");
 
 session{
 	username: string
-	hash of password:
+	passHash: hash for password 
 	role: string ['administrator', 'employee', 'customer']
 
 	for employees and administrator searching accounts:
@@ -47,6 +47,7 @@ Coleton - customer controls
 	Deposit - 
 	Withdraw - 
 	Get account details -
+	Transfer
 
 Cooper - backend for employee 
 	Transfer between two accounts - Use the customerId and an ID passed from the user to transfer money between the accounts 
