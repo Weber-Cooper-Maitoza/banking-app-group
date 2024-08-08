@@ -145,6 +145,9 @@ bank.route("/checkCustomerID/:id").post(async (req, res) => {
 // Get Customer Summary Route
 bank.route("/getCustomerSummary").post(async (req, res) => {
 	try {
+    if (!req.session.searchedCustomerID) {
+      return res.status(301).json()
+    }
     let db_connect = dbo.getDb();
     const options = { projection: { _id: 0, passHash: 0 }}
     const customerInfo = await db_connect.collection("accounts").findOne({customerId: req.session.searchedCustomerID}, options);

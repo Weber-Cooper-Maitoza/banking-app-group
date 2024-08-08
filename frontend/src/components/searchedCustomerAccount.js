@@ -42,20 +42,27 @@ export default function CustomerAccount() {
 	};
 
 	useEffect(() => {
-		async function checkPermissions() {
-			const result = await fetch(`http://localhost:5001/accountDetails`, {
-				method: "POST",
-				credentials: "include",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
-			const response = await result.json();
-			setUserRole(response.role);
-			if (response.role === "customer") {
+		async function getAccountDetails() {
+			const response = await fetch(
+				"http://localhost:5001/accountDetails",
+				{
+					method: "POST",
+					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
+			if(response.status === 301){
 				navigate("/");
+				return
 			}
-			return;
+			const account = await response.json();
+			if (account.username == null) {
+				navigate("/");
+				return;
+			} 
+			setUserRole(account.role);
 		}
 		async function getAccountDetails() {
 			const response = await fetch(
@@ -68,17 +75,19 @@ export default function CustomerAccount() {
 					},
 				}
 			);
-			const account = await response.json();
-			if (account.check === false) {
-				navigate("/e-customer-search");
+			if (response.status == 301) {
+				navigate("/");
+				return;
 			}
+
+			const account = await response.json();
 			setCustomer(account);
 			setCustomerRole(account.role)
 			setBank(account.accounts);
 			console.log(account);
 		}
 
-		checkPermissions().then(getAccountDetails);
+		getAccountDetails().then(getAccountDetails);
 	}, [navigate]);
 
 	return (
@@ -182,7 +191,6 @@ function History({ bankAccount }) {
 }
 
 function HistoryItem({ history, idx }) {
-	// console.log(history)
 	const date = new Date(history.date);
 	return (
 		<>
@@ -320,14 +328,12 @@ function InsideTransferMenu({ bankAccounts, onUpdate }) {
 			  to: to
 			}),
 		  });
-		//   console.log(response)
 		  if(response.status === 301){
 			console.log("error")
 			window.alert(`Can't Transfer ${from} can not be negative`)
 			return;
 		  }
 		  const data = await response.json()
-		//   console.log(data)
 		onUpdate(data.returnValue)
 		setAmount("")
 		setFrom("")
@@ -436,7 +442,6 @@ function TransferMenu({ bankAccounts, onUpdate }) {
 			  toUser: toCustomerID
 			}),
 		  });
-		//   console.log(response)
 		  if(response.status === 302){
 			window.alert(`Can't Transfer to user id ${toCustomerID}`)
 
@@ -447,7 +452,6 @@ function TransferMenu({ bankAccounts, onUpdate }) {
 			return;
 		  }
 		  const data = await response.json()
-		//   console.log(data)
 		onUpdate(data.returnValue)
 		setAmount("")
 		setFrom("")
@@ -574,14 +578,11 @@ function ChangeRole({ role, customerRole, onUpdate }) {
 					}),
 				}
 			);
-			// window.location.reload();
 			onUpdate(await result.json())
-			// console.log(await result.json())
 		}
 	}, [changedRole, role, onUpdate])
 
 	if (role !== "administrator") return null;
-	// console.log(role);
 	return (
 		<>
 			<div className="row">

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router";
 
-// import './css/sb-admin-2.css'
 import "./css/bootstrap.css";
 
 export default function UserName() {
@@ -33,25 +32,19 @@ export default function UserName() {
 				return
 			}
 			const account = await response.json();
-			//console.log(account);
 			if (account.username == null) {
 				navigate("/");
 				return
 			} else {
 				setAccount(account);
 				setBank(account.accounts);
-				// console.log(account);
 			}
 		}
-		// login().then(getAccountDetails);
 		getAccountDetails();
 	}, [navigate]);
 
 	const handleAccountUpdate = (newBankDetails) => {
-		// console.log("hello", newBankDetails)
 		setBank(newBankDetails);
-		// console.log("hlo", bankAccounts)
-
 	};
 
 	return (
@@ -155,7 +148,6 @@ function History({ accountDetails }) {
 }
 
 function HistoryItem({ history, idx }) {
-	// console.log(history)
 	const date = new Date(history.date);
 	return (
 		<>
@@ -179,17 +171,16 @@ function BankEdit({ accountDetails, onUpdate }) {
 	const updateAccount = useCallback(
 		async (event) => {
 		  event.preventDefault();
-		  //console.log(account);
 	
 		  let response;
 		  if (typeSelect === "Withdraw") {
-			//console.log(typeSelect);
 
-			response = await fetch("http://localhost:5001/cu-withdraw", {
-			  method: "POST",
-			  credentials: "include",
-			  headers: {
-				"Content-Type": "application/json",
+			response = await fetch("http://localhost:5001/cu-withdraw", 
+				{
+					method: "POST",
+					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
 			  },
 			  body: JSON.stringify({
 				accountName: account.accountName,
@@ -202,11 +193,8 @@ function BankEdit({ accountDetails, onUpdate }) {
 				return
 			}
 			const data = await response.json();
-			//console.log(data.selectedAccount);
 			setAccount(data.selectedAccount);
 			onUpdate(data.selectedAccount); // Update the parent component
-			//console.log(account);
-			
 		  }
 	
 		  if (typeSelect === "Deposit") {
@@ -222,10 +210,8 @@ function BankEdit({ accountDetails, onUpdate }) {
 			  }),
 			});
 			const data = await response.json();
-			//console.log(data.selectedAccount);
 			setAccount(data.selectedAccount);
 			onUpdate(data.selectedAccount); // Update the parent component
-			//console.log(account);
 		  }
 		  setAmount("")
 		},
@@ -272,7 +258,6 @@ function BankEdit({ accountDetails, onUpdate }) {
 							) {
 								setAmount(e.target.value);
 							}
-							//console.log(amount);
 						}}
 					/>
 				</div>
@@ -297,8 +282,6 @@ function TransferMenu({ bankAccounts, onUpdate}) {
 	const [from, setFrom] = useState("");
 	const [to, setTo] = useState("");
 	const updateAccount = useCallback( async (e) => {
-		//console.log("hhhhhhh")
-
 		e.preventDefault();
 		const response = await fetch("http://localhost:5001/cu-transfer", {
 			method: "POST",
@@ -312,14 +295,12 @@ function TransferMenu({ bankAccounts, onUpdate}) {
 			  to: to
 			}),
 		  });
-		  //console.log(response)
 		  if(response.status === 301){
 			console.log("error")
 			window.alert(`Can't Transfer ${from} can not be negative`)
 			return;
 		  }
 		  const data = await response.json()
-		  //console.log(data)
 		onUpdate(data.returnValue)
 		setAmount("")
 		setFrom("")
