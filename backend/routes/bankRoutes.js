@@ -102,10 +102,21 @@ bank.post("/logout", async (req, res) => {
     });
 });
 
+bank.route("/logout").get(async (req, res) => {
+  req.session.destroy();
+  let status = "No session set";
+  const resultObj = { status: status };
+  res.json(resultObj);
+});
+
 // Account details route.
 bank.route("/accountDetails").post(async (req, res) => {
   try {
+    if(!req.session.user){
+      return res.status(301).json()
+    }
     let db_connect = dbo.getDb();
+
     let myquery = { customerId:  req.session.user.customerId };
     const options = { projection: { _id: 0, passHash: 0 }}
     const result = await db_connect.collection("accounts").findOne(myquery, options);
@@ -153,7 +164,7 @@ bank.route("/changeCustomerRole").post(async (req, res) => {
       }
     };
     const result = db_connect.collection("accounts").updateOne({customerId: req.session.searchedCustomerID}, changeRole);
-    res.status(200).json(result);
+    res.status(200).json(req.body.role);
   } catch(err) {
     throw err;
   }
@@ -184,7 +195,7 @@ bank.route("/employee/deposit").post(async (req, res) => {
 
     const customerInfo = await db_connect.collection("accounts").findOne({customerId: req.session.searchedCustomerID});
     const newAccount = (customerInfo.accounts).map((account) => {return account;});
-
+    let updatedAccount;
     newAccount.forEach((accounts)=> {
       if (accounts.accountName == accountNa){
         accounts.amount = amount + parseFloat(accounts.amount);
@@ -194,6 +205,7 @@ bank.route("/employee/deposit").post(async (req, res) => {
           date: Date.now(),
           recipient: accounts.accountName,
         })
+        updatedAccount = accounts
       }
     });
 
@@ -204,7 +216,7 @@ bank.route("/employee/deposit").post(async (req, res) => {
     };
     const result = db_connect.collection("accounts").updateOne({customerId: req.session.searchedCustomerID}, newAccountStatement);
 
-    res.status(200).json(result)
+    res.status(200).json(updatedAccount)
   }catch(err){
     throw err;
   }
@@ -220,14 +232,13 @@ bank.route("/employee/withdraw").post(async (req, res) => {
 
     const customerInfo = await db_connect.collection("accounts").findOne({customerId: req.session.searchedCustomerID});
     const newAccount = (customerInfo.accounts).map((account) => {return account;});
+    let newTotal
+    let updatedAccount;
 
     newAccount.forEach((accounts)=> {
       if (accounts.accountName == accountNa){
-        let newTotal = Math.round((parseFloat(accounts.amount) - amount) * 100) / 100
-        if (newTotal < 0) {
-          res.status(400).json("Cannot withdraw more than available.");
-          return;
-        }
+        newTotal = Math.round((parseFloat(accounts.amount) - amount) * 100) / 100
+        
         accounts.amount = newTotal;
         accounts.history.push({
           type: "Withdraw",
@@ -235,8 +246,13 @@ bank.route("/employee/withdraw").post(async (req, res) => {
           date: Date.now(),
           recipient: accounts.accountName,
         })
+        updatedAccount = accounts
       }
     });
+    //Can't be inside for each
+    if (newTotal < 0) {
+      return res.status(301).json("Cannot withdraw more than available.");
+    }
 
     let newAccountStatement = {
       $set: {
@@ -245,7 +261,7 @@ bank.route("/employee/withdraw").post(async (req, res) => {
     };
     const result = db_connect.collection("accounts").updateOne({customerId: req.session.searchedCustomerID}, newAccountStatement);
 
-    res.status(200).json(result)
+    return res.status(200).json(updatedAccount)
   }catch(err){
     throw err;
   }

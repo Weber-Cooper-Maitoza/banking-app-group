@@ -15,6 +15,10 @@ function NavBar() {
 					"Content-Type": "application/json",
 				},
 			});
+			if(result.status === 301){
+				setRole("")
+				return
+			}
 			const response = await result.json();
 			setRole(response.role);
 			return;
@@ -28,8 +32,9 @@ function NavBar() {
 			method: "GET",
 			credentials: "include",
 		});
-    console.log(response)
+    	console.log(response)
 		navigate("/");
+		// window.location.reload()
 	}
 
 	function areTheyEmployee() {

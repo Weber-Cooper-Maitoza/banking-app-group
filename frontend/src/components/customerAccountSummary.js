@@ -28,10 +28,15 @@ export default function UserName() {
 					},
 				}
 			);
+			if(response.status === 301){
+				navigate("/");
+				return
+			}
 			const account = await response.json();
 			//console.log(account);
 			if (account.username == null) {
 				navigate("/");
+				return
 			} else {
 				setAccount(account);
 				setBank(account.accounts);

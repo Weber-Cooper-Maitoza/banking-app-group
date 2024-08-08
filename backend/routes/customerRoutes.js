@@ -110,7 +110,7 @@ bank.route("/cu-transfer").post(async (req, res) => {
 
 		var fromSelectedAccount;
 		var toSelectedAccount;
-		bankDetails.accounts = bankDetails.accounts.map((account) => {
+		const newAccounts = bankDetails.accounts.map((account) => {
 			if (account.accountName == from) {
 				account.amount -= totalChange;
 				account.history.push({
@@ -140,11 +140,12 @@ bank.route("/cu-transfer").post(async (req, res) => {
 			return res.status(301).json();
 		}
 
-		const x = await db_connect.findOneAndReplace(
+
+		const x = await db_connect.updateOne(
 			{ customerId: req.session.user.customerId },
-			bankDetails
+			{$set: {accounts: newAccounts}}
 		);
-		const returnValue = bankDetails.accounts
+		const returnValue = newAccounts
 		res.status(200).json({
 			returnValue,
 		});

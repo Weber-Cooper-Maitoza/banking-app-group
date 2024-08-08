@@ -15,6 +15,7 @@ export default function CustomerAccount() {
 		role: "",
 		accounts: [],
 	});
+	const [customerRole, setCustomerRole] = useState("")
 
 	const [bankAccounts, setBank] = useState([
 		{
@@ -34,6 +35,10 @@ export default function CustomerAccount() {
 	const handleAccountUpdate = (newBankDetails) => {
 		console.log("update", newBankDetails)
 		setBank(newBankDetails);
+	};
+	const handleRoleUpdate = (newRole) => {
+		console.log("update", newRole)
+		setCustomerRole(newRole);
 	};
 
 	useEffect(() => {
@@ -68,6 +73,7 @@ export default function CustomerAccount() {
 				navigate("/e-customer-search");
 			}
 			setCustomer(account);
+			setCustomerRole(account.role)
 			setBank(account.accounts);
 			console.log(account);
 		}
@@ -90,10 +96,10 @@ export default function CustomerAccount() {
 				</h4>
 				<h4 className="col">
 					Role:{" "}
-					<span className="text-secondary">{customer.role}</span>
+					<span className="text-secondary">{customerRole}</span>
 				</h4>
 			</div>
-			<ChangeRole role={userRole} customerRole={customer.role} />
+			<ChangeRole role={userRole} customerRole={customerRole} onUpdate={handleRoleUpdate}/>
 
 			<h2 className="mt-4">Bank Details</h2>
 			{bankAccounts.map((account, idx) => {
@@ -119,6 +125,12 @@ function History({ bankAccount }) {
 	useEffect(() => {
 		setAccount(bankAccount)
 	},[bankAccount])
+
+	const handleAccountUpdate = (updatedAccount) => {
+		console.log(account)
+		setAccount(updatedAccount);
+	  };
+
 	return (
 		<div className="container">
 			<div className="row">
@@ -135,7 +147,7 @@ function History({ bankAccount }) {
 					</button>
 				</div>
 			</div>
-			<BankEdit account={account}></BankEdit>
+			<BankEdit account={account} onUpdate={handleAccountUpdate}></BankEdit>
 
 			<div className="my-2">
 				{showHistory ? (
@@ -156,6 +168,7 @@ function History({ bankAccount }) {
 									<HistoryItem
 										history={history}
 										idx={idx}
+										key={idx}
 									></HistoryItem>
 								))}
 						</tbody>
@@ -184,14 +197,14 @@ function HistoryItem({ history, idx }) {
 	);
 }
 
-function BankEdit({ account }) {
+function BankEdit({ account, onUpdate }) {
 	const [amount, setAmount] = useState("");
 	const [typeSelect, setType] = useState("Deposit");
 
-	async function updateAccount(e) {
+	const updateAccount = useCallback( async (e) => {
 		e.preventDefault();
 		
-		if (typeSelect == "Deposit") {
+		if (typeSelect === "Deposit") {
 			const result = await fetch(`http://localhost:5001/employee/deposit`,
 				{
 					method: "POST",
@@ -205,6 +218,7 @@ function BankEdit({ account }) {
 					}),
 				}
 			);
+			onUpdate(await result.json())
 		} else {
 			const result = await fetch(`http://localhost:5001/employee/withdraw`,
 				{
@@ -219,9 +233,15 @@ function BankEdit({ account }) {
 					}),
 				}
 			);
+			if(result.status === 301){
+				window.alert("Can't Withdraw into Negatives")
+				return
+			}
+			onUpdate(await result.json())
 		}
-		window.location.reload();
-	}
+		setAmount("")
+		
+	}, [account.accountName, amount, onUpdate, typeSelect])
 
 	return (
 		<>
@@ -534,10 +554,10 @@ function TransferMenu({ bankAccounts, onUpdate }) {
 	);
 }
 
-function ChangeRole({ role, customerRole }) {
-	const [changedRole, setChangedRole] = useState("");
+function ChangeRole({ role, customerRole, onUpdate }) {
+	const [changedRole, setChangedRole] = useState(role);
 
-	async function onSubmit(e) {
+	const onSubmit = useCallback( async (e)=> {
 		e.preventDefault();
 
 		if (role === "administrator") {
@@ -554,10 +574,11 @@ function ChangeRole({ role, customerRole }) {
 					}),
 				}
 			);
-			window.location.reload();
-			// console.log(result)
+			// window.location.reload();
+			onUpdate(await result.json())
+			// console.log(await result.json())
 		}
-	}
+	}, [changedRole, role, onUpdate])
 
 	if (role !== "administrator") return null;
 	// console.log(role);
@@ -579,9 +600,10 @@ function ChangeRole({ role, customerRole }) {
 						}}
 						value={!changedRole ? customerRole: changedRole}
 					>
-						<option value="customer">customer</option>
-						<option value="employee">employee</option>
-						<option value="administrator">administrator</option>
+						<option></option>
+						<option value="customer" selected={role === "customer"? "selected": ""}>customer</option>
+						<option value="employee" selected={role === "employee"? "selected": ""}>employee</option>
+						<option value="administrator" selected={role === "administrator"? "selected": ""}>administrator</option>
 					</select>
 				</div>
 				<div className="col">
