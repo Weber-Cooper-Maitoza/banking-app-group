@@ -37,6 +37,8 @@ app.use(express.json());
 //app.use(require("./routes/test_routes.js"));
 
 app.use(require("./routes/bankRoutes.js"));
+app.use(require("./routes/customerRoutes.js"));
+
 
 
 const port = process.env.PORT;
