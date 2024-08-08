@@ -41,6 +41,9 @@ bank.route("/emp-outside-transfer").post(async (req, res) => {
 		const toUserAccount = await db_connect.findOne({
 			customerId: req.body.toUser,
 		});
+		if(!toUserAccount){
+			return res.status(302).json()
+		}
 
 		var fromSelectedAccount;
 		var toSelectedAccount;
@@ -58,7 +61,7 @@ bank.route("/emp-outside-transfer").post(async (req, res) => {
 			return account;
 		});
 
-		toSelectedAccount.accounts = toSelectedAccount.accounts.map((account) => {
+		toUserAccount.accounts = toUserAccount.accounts.map((account) => {
 			if (account.accountName == to) {
 				account.amount += totalChange;
 				account.history.push({
@@ -73,6 +76,7 @@ bank.route("/emp-outside-transfer").post(async (req, res) => {
 			return account;
 		});
 
+
 		if (fromSelectedAccount.amount < 0 || toSelectedAccount.amount < 0) {
 			return res.status(301).json();
 		}
@@ -83,7 +87,7 @@ bank.route("/emp-outside-transfer").post(async (req, res) => {
 		);
 		_ = await db_connect.findOneAndReplace(
 			{ customerId: req.body.toUser },
-			toSelectedAccount
+			toUserAccount
 		);
 		const returnValue = fromUserAccount.accounts
 		res.status(200).json({

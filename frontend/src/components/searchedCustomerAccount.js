@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router";
 
 import "./css/bootstrap.css";
@@ -30,6 +30,11 @@ export default function CustomerAccount() {
 			],
 		},
 	]);
+
+	const handleAccountUpdate = (newBankDetails) => {
+		console.log("update", newBankDetails)
+		setBank(newBankDetails);
+	};
 
 	useEffect(() => {
 		async function checkPermissions() {
@@ -93,26 +98,27 @@ export default function CustomerAccount() {
 			<h2 className="mt-4">Bank Details</h2>
 			{bankAccounts.map((account, idx) => {
 				return (
-					<div className="container-fluid my-3">
+					<div className="container-fluid my-3" key={account.accountName}>
 						<History
-							account={account}
-							history={account.history}
-							key={account.accountName}
+							bankAccount={account}
 						></History>
 					</div>
 				);
 			})}
 			<InsideTransferMenu
-				bankAccounts={bankAccounts}
+				bankAccounts={bankAccounts} onUpdate={handleAccountUpdate}
 			></InsideTransferMenu>
-			<TransferMenu bankAccounts={bankAccounts}></TransferMenu>
+			<TransferMenu bankAccounts={bankAccounts} onUpdate={handleAccountUpdate}></TransferMenu>
 		</div>
 	);
 }
 
-function History({ account }) {
+function History({ bankAccount }) {
 	const [showHistory, setShowHistory] = useState();
-	const history = account.history;
+	const [account, setAccount] = useState(bankAccount)
+	useEffect(() => {
+		setAccount(bankAccount)
+	},[bankAccount])
 	return (
 		<div className="container">
 			<div className="row">
@@ -144,7 +150,7 @@ function History({ account }) {
 							</tr>
 						</thead>
 						<tbody>
-							{history
+							{(account.history)
 								.sort((a, b) => a.date < b.date)
 								.map((history, idx) => (
 									<HistoryItem
@@ -260,14 +266,39 @@ function BankEdit({ account }) {
 	);
 }
 
-function InsideTransferMenu({ bankAccounts }) {
+function InsideTransferMenu({ bankAccounts, onUpdate }) {
 	const [amount, setAmount] = useState();
 	const [from, setFrom] = useState("");
 	const [to, setTo] = useState("");
-	function updateAccount(e) {
+	const updateAccount = useCallback( async (e) => {
+		console.log("hhhhhhh")
+
 		e.preventDefault();
-		// console.log(e);
-	}
+		const response = await fetch("http://localhost:5001/emp-transfer", {
+			method: "POST",
+			credentials: "include",
+			headers: {
+			  "Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+			  from: from,
+			  amount: amount,
+			  to: to
+			}),
+		  });
+		  console.log(response)
+		  if(response.status === 301){
+			console.log("error")
+			window.alert(`Can't Transfer ${from} can not be negative`)
+			return;
+		  }
+		  const data = await response.json()
+		  console.log(data)
+		onUpdate(data.returnValue)
+		setAmount("")
+		setFrom("")
+		setTo("")
+	}, [amount, from, to, onUpdate])
 	return (
 		<>
 			<h2>Transfer Within Account</h2>
@@ -283,7 +314,7 @@ function InsideTransferMenu({ bankAccounts }) {
 							setFrom(e.target.value);
 						}}
 					>
-						<option></option>
+						<option selected = {from === "" ? "selected" : ""}></option>
 
 						{bankAccounts.map((account, idx) => {
 							if (account.accountName !== to) {
@@ -304,7 +335,7 @@ function InsideTransferMenu({ bankAccounts }) {
 							setTo(e.target.value);
 						}}
 					>
-						<option></option>
+						<option selected = {to === "" ? "selected" : ""}></option>
 						{bankAccounts.map((account, idx) => {
 							if (account.accountName !== from) {
 								return <option>{account.accountName}</option>;
@@ -350,42 +381,46 @@ function InsideTransferMenu({ bankAccounts }) {
 	);
 }
 
-function TransferMenu({ bankAccounts }) {
-	const [FromCustomerID, setFromCustomerID] = useState("");
+function TransferMenu({ bankAccounts, onUpdate }) {
+	const [toCustomerID, setToCustomerID] = useState("");
 	const [amount, setAmount] = useState();
 	const [from, setFrom] = useState("");
 	const [to, setTo] = useState("");
 
-	async function updateAccount(e) {
+	const updateAccount = useCallback( async (e) => {
 		e.preventDefault();
-		const check = await fetch(`http://localhost:5001/checkCustomerID/${FromCustomerID}`, {
+		const response = await fetch("http://localhost:5001/emp-outside-transfer", {
 			method: "POST",
 			credentials: "include",
 			headers: {
-				"Content-Type": "application/json",
+			  "Content-Type": "application/json",
 			},
-		});
-		const result = await check.json();
-		if (!result.check) {
-			window.alert("Could not find user.");
+			body: JSON.stringify({
+			  from: from,
+			  amount: amount,
+			  to: to,
+			  toUser: toCustomerID
+			}),
+		  });
+		  console.log(response)
+		  if(response.status === 302){
+			window.alert(`Can't Transfer to user id ${toCustomerID}`)
+
+		  }
+		  if(response.status === 301){
+			console.log("error")
+			window.alert(`Can't Transfer ${from} can not be negative`)
 			return;
-		} 
-		const response = await fetch(
-			`http://localhost:5001/employee/transfer/${FromCustomerID}`,
-			{
-				method: "POST",
-				credentials: "include",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: {
-					from: from,
-					to: to,
-					amount: amount
-				}
-			}
-		);
-	}
+		  }
+		  const data = await response.json()
+		  console.log(data)
+		onUpdate(data.returnValue)
+		setAmount("")
+		setFrom("")
+		setTo("")
+		setToCustomerID("")
+	}, [amount, from, to, toCustomerID, onUpdate])
+
 
 	return (
 		<>
@@ -405,9 +440,9 @@ function TransferMenu({ bankAccounts }) {
 								id="customerIDSearch"
 								className="form-control"
 								placeholder="ID"
-								value={FromCustomerID}
+								value={toCustomerID}
 								onChange={(e) => {
-									setFromCustomerID(e.target.value);
+									setToCustomerID(e.target.value);
 								}}
 							></input>
 						</div>
@@ -424,7 +459,7 @@ function TransferMenu({ bankAccounts }) {
 							setFrom(e.target.value);
 						}}
 					>
-						<option></option>
+						<option selected = {from === "" ? "selected" : ""}></option>
 
 						{bankAccounts.map((account, idx) => {
 							return <option>{account.accountName}</option>;
@@ -442,7 +477,7 @@ function TransferMenu({ bankAccounts }) {
 							setTo(e.target.value);
 						}}
 					>
-						<option></option>
+						<option selected = {to === "" ? "selected" : ""}></option>
 						{bankAccounts.map((account, idx) => {
 							return <option>{account.accountName}</option>;
 						})}
