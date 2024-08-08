@@ -173,5 +173,42 @@ bank.route("/employee/transfer/:id").post(async (req, res) => {
     throw err;
   }
 });    
+
+bank.route("/employee/deposit").post(async (req, res) => {
+  try{
+    const accountNa = req.body.accountName
+    const totalChange = req.body.depositAmount
+
+    const db_connect = dbo.getDb();
+
+    const customerInfo = await db_connect.collection("accounts").findOne({customerId: req.session.searchedCustomerID});
+
+    console.log(customerInfo.accounts);
+    const newAccount = (customerInfo.accounts).map((account) => {return account;});
+    newAccount.forEach((accounts)=> {
+      if (accounts.accountName == accountNa){
+        accounts.amount += totalChange
+        accounts.history.push({
+          type: "Deposit",
+          amount: totalChange,
+          date: Date.now(),
+          recipient: accounts.accountName,
+        })
+      }
+    });
+    let newAccountStatement = {
+      $set: {
+        accounts: newAccount
+      }
+    };
+    const result = db_connect.collection("accounts").updateOne({customerId: req.session.searchedCustomerID}, newAccountStatement);
+    // customerInfo.accounts = newAccount;
+    // const x = await db_connect.findOneAndReplace({customerId: req.session.searchedCustomerID}, customerInfo)
+
+    res.status(200).json(result)
+  }catch(err){
+    throw err;
+  }
+});
     
 module.exports = bank
