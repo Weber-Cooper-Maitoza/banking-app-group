@@ -182,9 +182,23 @@ function BankEdit({ account }) {
 	const [amount, setAmount] = useState("");
 	const [typeSelect, setType] = useState("Deposit");
 
-	function updateAccount(e) {
+	async function updateAccount(e) {
 		e.preventDefault();
-		// console.log(e);
+		const result = await fetch(`http://localhost:5001/employee/deposit`,
+			{
+				method: "POST",
+				credentials: "include",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					accountName: account.accountName, 
+    			depositAmount: amount
+				}),
+			}
+		);
+		window.location.reload();
+		console.log(result)
 	}
 
 	return (
