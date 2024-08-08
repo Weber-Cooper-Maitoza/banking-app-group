@@ -38,6 +38,7 @@ app.use(express.json());
 
 app.use(require("./routes/bankRoutes.js"));
 app.use(require("./routes/customerRoutes.js"));
+app.use(require("./routes/employeeRoutes.js"));
 
 
 
