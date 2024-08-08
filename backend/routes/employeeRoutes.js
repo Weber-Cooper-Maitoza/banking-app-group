@@ -54,10 +54,10 @@ bank.route("/emp-outside-transfer").post(async (req, res) => {
 					type: "Transfer",
 					amount: totalChange,
 					date: Date.now(),
-					recipient: account.accountName,
+					recipient: `${toUserAccount.username}  ${account.accountName}`,
 				});
 				fromSelectedAccount = account;
-			}
+			} 
 			return account;
 		});
 
@@ -68,7 +68,7 @@ bank.route("/emp-outside-transfer").post(async (req, res) => {
 					type: "Transfer",
 					amount: totalChange,
 					date: Date.now(),
-					recipient: account.accountName,
+					recipient: `${toUserAccount.username}  ${account.accountName}`,
 				});
 				toSelectedAccount = account;
 			}
