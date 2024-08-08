@@ -184,21 +184,37 @@ function BankEdit({ account }) {
 
 	async function updateAccount(e) {
 		e.preventDefault();
-		const result = await fetch(`http://localhost:5001/employee/deposit`,
-			{
-				method: "POST",
-				credentials: "include",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					accountName: account.accountName, 
-    			depositAmount: amount
-				}),
-			}
-		);
+		
+		if (typeSelect == "Deposit") {
+			const result = await fetch(`http://localhost:5001/employee/deposit`,
+				{
+					method: "POST",
+					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						accountName: account.accountName, 
+						depositAmount: amount
+					}),
+				}
+			);
+		} else {
+			const result = await fetch(`http://localhost:5001/employee/withdraw`,
+				{
+					method: "POST",
+					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						accountName: account.accountName, 
+						depositAmount: amount
+					}),
+				}
+			);
+		}
 		window.location.reload();
-		console.log(result)
 	}
 
 	return (
