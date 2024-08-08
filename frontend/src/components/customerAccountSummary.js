@@ -136,6 +136,7 @@ function History({ accountDetails }) {
 									<HistoryItem
 										history={history}
 										idx={idx}
+										key={idx}
 									></HistoryItem>
 								))}
 						</tbody>
