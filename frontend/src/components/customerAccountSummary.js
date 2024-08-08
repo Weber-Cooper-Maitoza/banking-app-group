@@ -29,13 +29,13 @@ export default function UserName() {
 				}
 			);
 			const account = await response.json();
-			console.log(account);
+			//console.log(account);
 			if (account.username == null) {
 				navigate("/");
 			} else {
 				setAccount(account);
 				setBank(account.accounts);
-				console.log(account);
+				// console.log(account);
 			}
 		}
 		// login().then(getAccountDetails);
@@ -43,9 +43,9 @@ export default function UserName() {
 	}, [navigate]);
 
 	const handleAccountUpdate = (newBankDetails) => {
-		console.log("hello", newBankDetails)
+		// console.log("hello", newBankDetails)
 		setBank(newBankDetails);
-		console.log("hlo", bankAccounts)
+		// console.log("hlo", bankAccounts)
 
 	};
 
@@ -174,11 +174,11 @@ function BankEdit({ accountDetails, onUpdate }) {
 	const updateAccount = useCallback(
 		async (event) => {
 		  event.preventDefault();
-		  console.log(account);
+		  //console.log(account);
 	
 		  let response;
 		  if (typeSelect === "Withdraw") {
-			console.log(typeSelect);
+			//console.log(typeSelect);
 
 			response = await fetch("http://localhost:5001/cu-withdraw", {
 			  method: "POST",
@@ -197,10 +197,10 @@ function BankEdit({ accountDetails, onUpdate }) {
 				return
 			}
 			const data = await response.json();
-			console.log(data.selectedAccount);
+			//console.log(data.selectedAccount);
 			setAccount(data.selectedAccount);
 			onUpdate(data.selectedAccount); // Update the parent component
-			console.log(account);
+			//console.log(account);
 			
 		  }
 	
@@ -217,10 +217,10 @@ function BankEdit({ accountDetails, onUpdate }) {
 			  }),
 			});
 			const data = await response.json();
-			console.log(data.selectedAccount);
+			//console.log(data.selectedAccount);
 			setAccount(data.selectedAccount);
 			onUpdate(data.selectedAccount); // Update the parent component
-			console.log(account);
+			//console.log(account);
 		  }
 		  setAmount("")
 		},
@@ -267,7 +267,7 @@ function BankEdit({ accountDetails, onUpdate }) {
 							) {
 								setAmount(e.target.value);
 							}
-							console.log(amount);
+							//console.log(amount);
 						}}
 					/>
 				</div>
@@ -292,7 +292,7 @@ function TransferMenu({ bankAccounts, onUpdate}) {
 	const [from, setFrom] = useState("");
 	const [to, setTo] = useState("");
 	const updateAccount = useCallback( async (e) => {
-		console.log("hhhhhhh")
+		//console.log("hhhhhhh")
 
 		e.preventDefault();
 		const response = await fetch("http://localhost:5001/cu-transfer", {
@@ -307,14 +307,14 @@ function TransferMenu({ bankAccounts, onUpdate}) {
 			  to: to
 			}),
 		  });
-		  console.log(response)
+		  //console.log(response)
 		  if(response.status === 301){
 			console.log("error")
 			window.alert(`Can't Transfer ${from} can not be negative`)
 			return;
 		  }
 		  const data = await response.json()
-		  console.log(data)
+		  //console.log(data)
 		onUpdate(data.returnValue)
 		setAmount("")
 		setFrom("")

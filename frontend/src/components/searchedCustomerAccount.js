@@ -271,8 +271,6 @@ function InsideTransferMenu({ bankAccounts, onUpdate }) {
 	const [from, setFrom] = useState("");
 	const [to, setTo] = useState("");
 	const updateAccount = useCallback( async (e) => {
-		console.log("hhhhhhh")
-
 		e.preventDefault();
 		const response = await fetch("http://localhost:5001/emp-transfer", {
 			method: "POST",
@@ -286,14 +284,14 @@ function InsideTransferMenu({ bankAccounts, onUpdate }) {
 			  to: to
 			}),
 		  });
-		  console.log(response)
+		//   console.log(response)
 		  if(response.status === 301){
 			console.log("error")
 			window.alert(`Can't Transfer ${from} can not be negative`)
 			return;
 		  }
 		  const data = await response.json()
-		  console.log(data)
+		//   console.log(data)
 		onUpdate(data.returnValue)
 		setAmount("")
 		setFrom("")
@@ -402,7 +400,7 @@ function TransferMenu({ bankAccounts, onUpdate }) {
 			  toUser: toCustomerID
 			}),
 		  });
-		  console.log(response)
+		//   console.log(response)
 		  if(response.status === 302){
 			window.alert(`Can't Transfer to user id ${toCustomerID}`)
 
@@ -413,7 +411,7 @@ function TransferMenu({ bankAccounts, onUpdate }) {
 			return;
 		  }
 		  const data = await response.json()
-		  console.log(data)
+		//   console.log(data)
 		onUpdate(data.returnValue)
 		setAmount("")
 		setFrom("")
@@ -541,12 +539,12 @@ function ChangeRole({ role, customerRole }) {
 				}
 			);
 			window.location.reload();
-			console.log(result)
+			// console.log(result)
 		}
 	}
 
 	if (role !== "administrator") return null;
-	console.log(role);
+	// console.log(role);
 	return (
 		<>
 			<div className="row">
