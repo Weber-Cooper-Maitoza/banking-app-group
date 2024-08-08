@@ -203,19 +203,16 @@ bank.route("/employee/deposit").post(async (req, res) => {
         })
       }
     });
-    let newAccount = {
+    let newAccountStatement = {
       $set: {
-        role: req.body.role
+        accounts: newAccount
       }
     };
-    const result = db_connect.collection("accounts").updateOne({customerId: req.session.searchedCustomerID}, changeRole);
-    customerInfo.accounts = newAccount;
-    const x = await db_connect.findOneAndReplace({customerId: req.session.searchedCustomerID}, customerInfo)
+    const result = db_connect.collection("accounts").updateOne({customerId: req.session.searchedCustomerID}, newAccountStatement);
+    // customerInfo.accounts = newAccount;
+    // const x = await db_connect.findOneAndReplace({customerId: req.session.searchedCustomerID}, customerInfo)
 
-	res.status(200).json({
-    x
-	})
-
+    res.status(200).json(result)
   }catch(err){
     throw err;
   }
