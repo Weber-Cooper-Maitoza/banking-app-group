@@ -174,6 +174,7 @@ bank.route("/employee/transfer/:id").post(async (req, res) => {
   }
 });    
 
+// Deposit from searched customer's account via employee.
 bank.route("/employee/deposit").post(async (req, res) => {
   try{
     const db_connect = dbo.getDb();
@@ -209,4 +210,45 @@ bank.route("/employee/deposit").post(async (req, res) => {
   }
 });
     
+// Withdraw from searched customer's account via employee.
+bank.route("/employee/withdraw").post(async (req, res) => {
+  try{
+    const db_connect = dbo.getDb();
+
+    const accountNa = req.body.accountName;
+    const amount = parseFloat(req.body.depositAmount);
+
+    const customerInfo = await db_connect.collection("accounts").findOne({customerId: req.session.searchedCustomerID});
+    const newAccount = (customerInfo.accounts).map((account) => {return account;});
+
+    newAccount.forEach((accounts)=> {
+      if (accounts.accountName == accountNa){
+        let newTotal = Math.round((parseFloat(accounts.amount) - amount) * 100) / 100
+        if (newTotal < 0) {
+          res.status(400).json("Cannot withdraw more than available.");
+          return;
+        }
+        accounts.amount = newTotal;
+        accounts.history.push({
+          type: "Withdraw",
+          amount: `$${amount}`,
+          date: Date.now(),
+          recipient: accounts.accountName,
+        })
+      }
+    });
+
+    let newAccountStatement = {
+      $set: {
+        accounts: newAccount
+      }
+    };
+    const result = db_connect.collection("accounts").updateOne({customerId: req.session.searchedCustomerID}, newAccountStatement);
+
+    res.status(200).json(result)
+  }catch(err){
+    throw err;
+  }
+});
+
 module.exports = bank
