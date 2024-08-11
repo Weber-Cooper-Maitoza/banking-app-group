@@ -42,7 +42,7 @@ export default function CustomerAccount() {
 	};
 
 	useEffect(() => {
-		async function getAccountDetails() {
+		async function getUserDetails() {
 			const response = await fetch(
 				"http://localhost:5001/accountDetails",
 				{
@@ -62,6 +62,7 @@ export default function CustomerAccount() {
 				navigate("/");
 				return;
 			} 
+			console.log(account)
 			setUserRole(account.role);
 		}
 		async function getAccountDetails() {
@@ -84,10 +85,10 @@ export default function CustomerAccount() {
 			setCustomer(account);
 			setCustomerRole(account.role)
 			setBank(account.accounts);
-			console.log(account);
+			// console.log(account);
 		}
 
-		getAccountDetails().then(getAccountDetails);
+		getUserDetails().then(getAccountDetails);
 	}, [navigate]);
 
 	return (
@@ -583,6 +584,7 @@ function ChangeRole({ role, customerRole, onUpdate }) {
 	}, [changedRole, role, onUpdate])
 
 	if (role !== "administrator") return null;
+
 	return (
 		<>
 			<div className="row">
