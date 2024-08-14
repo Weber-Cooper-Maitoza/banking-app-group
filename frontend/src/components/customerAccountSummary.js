@@ -129,7 +129,7 @@ function History({ accountDetails }) {
 						</thead>
 						<tbody>
 							{(account.history)
-								.sort((a, b) => a.date < b.date)
+								.sort((a, b) => new Date(b.date) - new Date(a.date))
 								.map((history, idx) => (
 									<HistoryItem
 										history={history}
