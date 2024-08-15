@@ -1,5 +1,7 @@
 # TBD Banking App
 
+[Check out the repository](https://github.com/Weber-Cooper-Maitoza/banking-app-group)
+
 ## Description
 
 A website based project showcasing the skills of Brody Gardner, Cooper Maitoza, and Coleton Watt. It has a fully featured backend, database, and frontend.
@@ -35,3 +37,4 @@ A website based project showcasing the skills of Brody Gardner, Cooper Maitoza, 
 ![A banking page to allow employees to manage a customers account](Screenshots/image-1.png)
 ![The full page showcasing the amazing navbar](Screenshots/image-2.png)
 ![Depositing money into an account](<Screenshots/Deposit money capture.gif>)
+
